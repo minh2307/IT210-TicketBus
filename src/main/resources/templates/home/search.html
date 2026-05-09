@@ -1,0 +1,185 @@
+<!-- === home/search.html === -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout-user}">
+<head>
+    <title>Tìm kiếm chuyến xe</title>
+    <link rel="stylesheet" th:href="@{/css/search-trip.css}">
+</head>
+<body>
+<main layout:fragment="content">
+
+    <!-- ===================== SEARCH HEADER ===================== -->
+    <section class="search-header" id="searchHeader">
+        <div class="container">
+            <h1 class="search-title">🔍 Kết quả tìm kiếm</h1>
+            <div class="search-summary" id="searchSummary">
+                <span class="route-label" id="routeLabel">
+                    <i data-lucide="route" style="width:16px;height:16px"></i>
+                    <span th:if="${from != null and to != null}" th:text="${from + ' → ' + to + ' · ' + date}"></span>
+                    <span th:unless="${from != null and to != null}">Vui lòng nhập thông tin tìm kiếm</span>
+                </span>
+            </div>
+
+            <!-- Inline Re-search Form -->
+            <div class="search-box-inline" id="searchBoxInline">
+                <div th:if="${error}" class="alert alert-danger" style="margin-bottom: 15px; border-radius: 12px; font-size: 0.9rem; padding: 10px 15px;">
+                    <i data-lucide="alert-circle" style="width:16px;height:16px;vertical-align:middle;margin-right:8px"></i>
+                    <span th:text="${error}"></span>
+                </div>
+                <form th:action="@{/search}" method="GET">
+                    <div class="search-row">
+                        <div class="search-field">
+                            <label for="departure">Điểm đi</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="map-pin" class="input-icon"></i>
+                                <select id="departure" name="from" required>
+                                    <option value="" disabled th:selected="${from == null}">Chọn điểm đi</option>
+                                    <option value="HN" th:selected="${from == 'HN'}">Hà Nội</option>
+                                    <option value="HCM" th:selected="${from == 'HCM'}">TP. Hồ Chí Minh</option>
+                                    <option value="DN" th:selected="${from == 'DN'}">Đà Nẵng</option>
+                                    <option value="HP" th:selected="${from == 'HP'}">Hải Phòng</option>
+                                    <option value="CT" th:selected="${from == 'CT'}">Cần Thơ</option>
+                                    <option value="HUE" th:selected="${from == 'HUE'}">Huế</option>
+                                    <option value="NT" th:selected="${from == 'NT'}">Nha Trang</option>
+                                    <option value="DL" th:selected="${from == 'DL'}">Đà Lạt</option>
+                                    <option value="VT" th:selected="${from == 'VT'}">Vũng Tàu</option>
+                                    <option value="QN" th:selected="${from == 'QN'}">Quy Nhơn</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="button" class="swap-btn" id="swapBtn" title="Đổi chiều">
+                            <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i>
+                        </button>
+
+                        <div class="search-field">
+                            <label for="destination">Điểm đến</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="map-pin-check-inside" class="input-icon"></i>
+                                <select id="destination" name="to" required>
+                                    <option value="" disabled th:selected="${to == null}">Chọn điểm đến</option>
+                                    <option value="HN" th:selected="${to == 'HN'}">Hà Nội</option>
+                                    <option value="HCM" th:selected="${to == 'HCM'}">TP. Hồ Chí Minh</option>
+                                    <option value="DN" th:selected="${to == 'DN'}">Đà Nẵng</option>
+                                    <option value="HP" th:selected="${to == 'HP'}">Hải Phòng</option>
+                                    <option value="CT" th:selected="${to == 'CT'}">Cần Thơ</option>
+                                    <option value="HUE" th:selected="${to == 'HUE'}">Huế</option>
+                                    <option value="NT" th:selected="${to == 'NT'}">Nha Trang</option>
+                                    <option value="DL" th:selected="${to == 'DL'}">Đà Lạt</option>
+                                    <option value="VT" th:selected="${to == 'VT'}">Vũng Tàu</option>
+                                    <option value="QN" th:selected="${to == 'QN'}">Quy Nhơn</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="search-field">
+                            <label for="travelDate">Ngày đi</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="calendar" class="input-icon"></i>
+                                <input type="date" id="travelDate" name="date" th:value="${date}" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-search">
+                            <i data-lucide="search" style="width:20px;height:20px"></i>
+                            Tìm lại
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== RESULTS SECTION ===================== -->
+    <section class="results-section" id="resultsSection">
+        <div class="container">
+
+            <!-- Empty State -->
+            <div class="empty-state" th:if="${#lists.isEmpty(trips)}">
+                <div class="empty-icon">
+                    <i data-lucide="search-x" style="width:64px;height:64px"></i>
+                </div>
+                <h3>Không tìm thấy chuyến xe</h3>
+                <p>Hãy thử thay đổi điểm đi, điểm đến hoặc ngày khởi hành khác</p>
+            </div>
+
+            <!-- Results Count -->
+            <div class="results-count" th:if="${not #lists.isEmpty(trips)}">
+                <span th:text="${#lists.size(trips)}">0</span> chuyến xe được tìm thấy
+            </div>
+
+            <!-- Trip Cards Container -->
+            <div class="trips-grid">
+                <div class="trip-card" th:each="trip : ${trips}">
+                    <div class="trip-card-header">
+                        <div class="trip-route">
+                            <div class="trip-origin">
+                                <i data-lucide="map-pin" style="width:16px;height:16px"></i>
+                                <span th:text="${trip.originName}">HN</span>
+                            </div>
+                            <div class="trip-arrow">
+                                <div class="arrow-line"></div>
+                                <i data-lucide="chevron-right" style="width:16px;height:16px"></i>
+                            </div>
+                            <div class="trip-destination">
+                                <i data-lucide="map-pin-check-inside" style="width:16px;height:16px"></i>
+                                <span th:text="${trip.destinationName}">HCM</span>
+                            </div>
+                        </div>
+                        <div class="trip-price" th:text="${#numbers.formatDecimal(trip.ticketPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">200,000đ</div>
+                    </div>
+                    <div class="trip-card-body">
+                        <div class="trip-info-grid">
+                            <div class="trip-info-item">
+                                <i data-lucide="clock" style="width:15px;height:15px"></i>
+                                <span>Khởi hành: <strong th:text="${#temporals.format(trip.departureTime, 'HH:mm')}">08:00</strong></span>
+                            </div>
+                            <div class="trip-info-item">
+                                <i data-lucide="bus" style="width:15px;height:15px"></i>
+                                <span th:text="${trip.busType + ' · ' + trip.busLicensePlate}">Limousine</span>
+                            </div>
+                            <div class="trip-info-item">
+                                <i data-lucide="building-2" style="width:15px;height:15px"></i>
+                                <span th:text="${trip.companyName}">TicketBus</span>
+                            </div>
+                            <div class="trip-info-item">
+                                <i data-lucide="armchair" style="width:15px;height:15px"></i>
+                                <span>Còn <strong class="seats-available" th:text="${trip.availableSeats}">20</strong>/<span th:text="${trip.totalSeats}">30</span> ghế</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="trip-card-footer">
+                        <a th:href="@{/seat-map(tripId=${trip.tripId})}" class="btn-select-seat">
+                            <i data-lucide="layout-grid" style="width:18px;height:18px"></i>
+                            Chọn ghế
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('travelDate').setAttribute('min', today);
+
+            // Swap
+            document.getElementById('swapBtn').addEventListener('click', function() {
+                const from = document.getElementById('departure');
+                const to = document.getElementById('destination');
+                const temp = from.value;
+                from.value = to.value;
+                to.value = temp;
+            });
+        });
+    </script>
+
+</main>
+</body>
+</html>

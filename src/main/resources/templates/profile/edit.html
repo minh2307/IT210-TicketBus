@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Bus Ticket Pro'">Chỉnh sửa hồ sơ - Bus Ticket Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            width: 100%;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .link a:hover {
+            text-decoration: underline;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 th:text="${pageTitle}">Chỉnh sửa hồ sơ</h1>
+
+        <!-- Error messages -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <form th:action="@{/profile/edit}" th:object="${profileUpdateRequest}" method="post">
+            <div class="form-group">
+                <label for="fullName">Họ và tên:</label>
+                <input type="text" id="fullName" th:field="*{fullName}" maxlength="100"
+                       placeholder="Nhập họ và tên đầy đủ">
+                <div th:if="${#fields.hasErrors('fullName')}" class="error" th:errors="*{fullName}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Số điện thoại:</label>
+                <input type="text" id="phone" th:field="*{phone}"
+                       pattern="^(0[3|5|7|8|9])[0-9]{8}$"
+                       placeholder="Ví dụ: 0912345678"
+                       title="Vui lòng nhập số điện thoại Việt Nam hợp lệ">
+                <div th:if="${#fields.hasErrors('phone')}" class="error" th:errors="*{phone}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" th:field="*{email}" maxlength="100"
+                       placeholder="Ví dụ: email@example.com">
+                <div th:if="${#fields.hasErrors('email')}" class="error" th:errors="*{email}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Địa chỉ:</label>
+                <input type="text" id="address" th:field="*{address}" maxlength="255"
+                       placeholder="Nhập địa chỉ (không bắt buộc)">
+                <div th:if="${#fields.hasErrors('address')}" class="error" th:errors="*{address}"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        </form>
+
+        <div class="link">
+            <p><a th:href="@{/profile/view}">← Quay lại hồ sơ</a></p>
+        </div>
+    </div>
+</body>
+</html>

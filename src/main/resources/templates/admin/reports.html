@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout-admin}">
+<head>
+    <title>Báo cáo thống kê - TicketBus</title>
+    <style>
+        .report-card { border-radius: 15px; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .table-responsive { border-radius: 10px; overflow: hidden; }
+        .badge-revenue { background: rgba(39, 174, 96, 0.1); color: #27ae60; font-weight: bold; padding: 5px 10px; border-radius: 5px; }
+        .badge-count { background: rgba(52, 152, 219, 0.1); color: #3498db; font-weight: bold; padding: 5px 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content" class="container-fluid">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="page-title">Báo cáo & Thống kê</h3>
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary" onclick="window.print()">
+                    <i data-lucide="printer"></i> In báo cáo
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Doanh thu hàng ngày (Biểu đồ) -->
+            <div class="col-12 mb-4">
+                <div class="card report-card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i data-lucide="trending-up" class="mr-2"></i>Doanh thu theo ngày (Tháng hiện tại)</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="revenueChart" style="min-height: 350px; width: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Top 5 Tài xế -->
+            <div class="col-md-6 mb-4">
+                <div class="card report-card h-100">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i data-lucide="award" class="mr-2 text-warning"></i>Top 5 Tài xế xuất sắc (Doanh thu)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Tài xế</th>
+                                        <th class="text-center">Số chuyến</th>
+                                        <th class="text-right">Doanh thu</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="driver : ${topDrivers}">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-sm mr-3 bg-light rounded-circle text-center" style="width: 32px; height: 32px; line-height: 32px;">
+                                                    <i data-lucide="user" style="width: 16px; height: 16px;"></i>
+                                                </div>
+                                                <span th:text="${driver.driverName}">Nguyễn Văn A</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge-count" th:text="${driver.totalCompletedRides}">0</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <span class="badge-revenue" 
+                                                  th:text="${#numbers.formatDecimal(driver.driverRevenue, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(topDrivers)}">
+                                        <td colspan="3" class="text-center py-4 text-muted">Chưa có dữ liệu trong tháng này</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top 10 Tuyến đường -->
+            <div class="col-md-6 mb-4">
+                <div class="card report-card h-100">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i data-lucide="map" class="mr-2 text-info"></i>Top 10 Tuyến đường phổ biến</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Tuyến đường</th>
+                                        <th class="text-center">Lượt đặt</th>
+                                        <th class="text-right">Doanh thu</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="route : ${topRoutes}">
+                                        <td th:text="${route.routeName}">Hà Nội - Hải Phòng</td>
+                                        <td class="text-center">
+                                            <span class="badge-count" th:text="${route.bookingCount}">0</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <span class="badge-revenue" 
+                                                  th:text="${#numbers.formatDecimal(route.routeRevenue, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(topRoutes)}">
+                                        <td colspan="3" class="text-center py-4 text-muted">Chưa có dữ liệu thống kê</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="custom-js">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+
+            const dailyRevenue = /*[[${dailyRevenue}]]*/ [];
+            const labels = dailyRevenue.map(item => item.reportDate);
+            const data = dailyRevenue.map(item => item.totalRevenue);
+
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar', // Dùng biểu đồ cột cho trang báo cáo để dễ nhìn hơn
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doanh thu hàng ngày (VNĐ)',
+                        data: data,
+                        backgroundColor: 'rgba(52, 152, 219, 0.6)',
+                        borderColor: '#3498db',
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('vi-VN') + 'đ';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Doanh thu: ' + context.raw.toLocaleString('vi-VN') + ' VNĐ';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    </th:block>
+</body>
+</html>

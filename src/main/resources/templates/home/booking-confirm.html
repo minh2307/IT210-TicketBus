@@ -1,0 +1,122 @@
+<!-- === home/booking-confirm.html === -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/layout-user}">
+
+<head>
+    <title>Đặt vé thành công</title>
+    <link rel="stylesheet" th:href="@{/css/booking.css}">
+</head>
+
+<body>
+    <main layout:fragment="content">
+
+        <section class="confirm-section" id="confirmSection">
+            <div class="container">
+                <div class="confirm-card">
+                    <div class="confirm-icon">
+                        <i data-lucide="check-circle" style="width:64px;height:64px;color:#27ae60"></i>
+                    </div>
+                    <h1 class="confirm-title" th:text="${successMessage ?: 'Đặt vé thành công!'}">Đặt vé thành công!
+                    </h1>
+                    <p class="confirm-subtitle">Vé của bạn đã được tạo. Vui lòng đến quầy thanh toán trước giờ khởi
+                        hành.</p>
+
+                    <div class="confirm-info">
+                        <div class="ticket-codes-container" th:if="${bookedTickets}">
+                            <h3 class="info-label"><i data-lucide="ticket" style="width:18px;height:18px"></i> Danh sách
+                                vé đã đặt:</h3>
+                            <div class="ticket-grid">
+                                <div th:each="ticket : ${bookedTickets}" class="ticket-code-item"
+                                    style="display: flex; justify-content: space-between; align-items: center; padding: 12px; margin-bottom: 8px;">
+                                    <div class="ticket-details">
+                                        <span class="code-text" th:text="${ticket.ticketCode}"
+                                            style="font-family: monospace; font-weight: bold; color: var(--red-primary);"></span>
+                                        <span class="seat-badge" th:text="'Ghế: ' + ${ticket.seatNumber}"
+                                            style="margin-left: 10px; padding: 2px 8px; background: rgba(255,255,255,0.1); border-radius: 4px; font-size: 0.9em;"></span>
+                                    </div>
+                                    <button class="btn-copy js-copy-ticket" th:data-code="${ticket.ticketCode}"
+                                        title="Sao chép">
+                                        <i data-lucide="copy" style="width:14px;height:14px"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <i data-lucide="info" style="width:16px;height:16px"></i>
+                            <span>Trạng thái vé: <strong style="color:#f39c12">Chờ thanh toán</strong></span>
+                        </div>
+                        <div class="info-row">
+                            <i data-lucide="clock" style="width:16px;height:16px"></i>
+                            <span>Vui lòng thanh toán tại quầy trước giờ khởi hành</span>
+                        </div>
+                    </div>
+
+                    <div class="confirm-actions">
+                        <a th:href="@{/lookup}" class="btn-lookup">
+                            <i data-lucide="search" style="width:18px;height:18px"></i>
+                            Tra cứu vé của tôi
+                        </a>
+                        <a th:href="@{/}" class="btn-home">
+                            <i data-lucide="home" style="width:18px;height:18px"></i>
+                            Về trang chủ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                lucide.createIcons();
+
+                // Sửa lỗi triệt để bằng cách dùng Event Listener thay vì inline onclick
+                document.querySelectorAll('.js-copy-ticket').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const code = this.getAttribute('data-code');
+                        if (code) {
+                            const btn = this;
+                            const originalIcon = btn.innerHTML;
+
+                            copyToClipboard(code, () => {
+                                // Phản hồi trực quan: đổi icon thành check
+                                btn.innerHTML = '<i data-lucide="check" style="width:14px;height:14px;color:#27ae60"></i>';
+                                lucide.createIcons();
+
+                                setTimeout(() => {
+                                    btn.innerHTML = originalIcon;
+                                    lucide.createIcons();
+                                }, 2000);
+                            });
+                        }
+                    });
+                });
+            });
+
+            function copyToClipboard(text, callback) {
+                if (!navigator.clipboard) {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        if (callback) callback();
+                    } catch (err) {
+                        console.error('Không thể sao chép', err);
+                    }
+                    document.body.removeChild(textArea);
+                    return;
+                }
+                navigator.clipboard.writeText(text).then(() => {
+                    if (callback) callback();
+                }).catch(err => {
+                    console.error('Lỗi khi sao chép: ', err);
+                });
+            }
+        </script>
+
+    </main>
+</body>
+
+</html>

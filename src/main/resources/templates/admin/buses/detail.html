@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout-admin}">
+<head>
+    <title>Chi tiết xe - Bus Ticket Pro</title>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <style>
+        .detail-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e3e6f0;
+        }
+        .detail-header {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px 15px 0 0;
+        }
+        .detail-body {
+            padding: 2rem;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .info-section {
+            background: #f8f9fc;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #dc3545;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #5a5c69;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .info-value {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status-maintenance {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Admin</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/admin/buses}">Quản lý xe</a></li>
+                <li class="breadcrumb-item active">Chi tiết xe</li>
+            </ol>
+        </nav>
+
+        <!-- Bus Detail Card -->
+        <div class="detail-card">
+            <div class="detail-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-2" th:text="${bus.licensePlate}">29A-12345</h2>
+                        <p class="mb-0" th:text="${bus.companyName}">Hãng xe Hưng Thịnh</p>
+                    </div>
+                    <div>
+                        <span class="status-badge" 
+                              th:classappend="${bus.status == 'ACTIVE'} ? 'status-active' : 
+                                             (${bus.status == 'INACTIVE'} ? 'status-inactive' : 'status-maintenance')"
+                              th:text="${bus.status.displayName}">
+                            Hoạt động
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-body">
+                <div class="info-grid">
+                    <!-- Thông tin cơ bản -->
+                    <div class="info-section">
+                        <h4 class="mb-3">
+                            <i data-lucide="truck" style="width: 20px; height: 20px;"></i>
+                            Thông tin cơ bản
+                        </h4>
+                        <div class="info-label">Biển số xe</div>
+                        <div class="info-value" th:text="${bus.licensePlate}">29A-12345</div>
+                        
+                        <div class="info-label">Loại xe</div>
+                        <div class="info-value" th:text="${bus.busType.displayName}">45 chỗ</div>
+                        
+                        <div class="info-label">Số ghế</div>
+                        <div class="info-value" th:text="${bus.totalSeats}">45</div>
+                        
+                        <div class="info-label">Trạng thái</div>
+                        <div class="info-value">
+                            <span class="status-badge" 
+                                  th:classappend="${bus.status == 'ACTIVE'} ? 'status-active' : 
+                                                 (${bus.status == 'INACTIVE'} ? 'status-inactive' : 'status-maintenance')"
+                                  th:text="${bus.status.displayName}">
+                                Hoạt động
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin hãng xe -->
+                    <div class="info-section">
+                        <h4 class="mb-3">
+                            <i data-lucide="building" style="width: 20px; height: 20px;"></i>
+                            Thông tin hãng xe
+                        </h4>
+                        <div class="info-label">Hãng xe</div>
+                        <div class="info-value" th:text="${bus.companyName}">Hãng xe Hưng Thịnh</div>
+                        
+                        <div class="info-label" th:if="${bus.driverName}">Tên tài xế</div>
+                        <div class="info-value" th:if="${bus.driverName}" th:text="${bus.driverName}">Nguyễn Văn A</div>
+                        
+                        <div class="info-label" th:if="${bus.driverPhone}">SĐT tài xế</div>
+                        <div class="info-value" th:if="${bus.driverPhone}" th:text="${bus.driverPhone}">0912345678</div>
+                        
+                        <div class="info-label" th:if="${bus.driverName == null}">Thông tin tài xế</div>
+                        <div class="info-value text-muted" th:if="${bus.driverName == null}">Chưa có thông tin</div>
+                    </div>
+
+                    <!-- Thông tin hệ thống -->
+                    <div class="info-section">
+                        <h4 class="mb-3">
+                            <i data-lucide="clock" style="width: 20px; height: 20px;"></i>
+                            Thông tin hệ thống
+                        </h4>
+                        <div class="info-label">ID xe</div>
+                        <div class="info-value" th:text="${bus.id}">#12345</div>
+                        
+                        <div class="info-label">Ngày tạo</div>
+                        <div class="info-value" th:text="${#temporals.format(bus.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</div>
+                        
+                        <div class="info-label">Cập nhật lần cuối</div>
+                        <div class="info-value" th:text="${#temporals.format(bus.updatedAt, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-between mt-4 pt-4 border-top">
+                    <div>
+                        <a th:href="@{/admin/buses}" class="btn btn-outline-secondary">
+                            <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                            Quay lại danh sách
+                        </a>
+                    </div>
+                    <div>
+                        <a th:href="@{/admin/buses/{id}/edit(id=${bus.id})}" class="btn btn-warning mr-2">
+                            <i data-lucide="edit" style="width: 16px; height: 16px;"></i>
+                            Chỉnh sửa
+                        </a>
+                        <form th:action="@{/admin/buses/{id}/delete(id=${bus.id})}" 
+                              method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-danger" 
+                                    onclick="return confirmDelete()">
+                                <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                                Xóa xe
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        lucide.createIcons();
+        
+        function confirmDelete() {
+            return confirm('Bạn có chắc chắn muốn xóa xe này không? Hành động này không thể hoàn tác.');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!-- === home/index.html === -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout-user}">
+<head>
+    <title>Trang chủ</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- Success Message -->
+    <div th:if="${param.registerSuccess}" class="alert alert-success alert-dismissible fade show position-fixed" style="top: 80px; right: 20px; z-index: 1050; max-width: 400px;">
+        <strong>Đăng ký thành công!</strong><br>
+        Chào mừng bạn đến với TicketBus! Tài khoản của bạn đã được tạo và bạn đã đăng nhập tự động.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <!-- ===================== HERO SECTION ===================== -->
+    <section class="hero-section" id="heroSection">
+        <div class="particle" style="width:8px;height:8px;background:var(--red-primary);top:20%;left:10%;animation-delay:0s"></div>
+        <div class="particle" style="width:6px;height:6px;background:var(--accent-blue);top:60%;left:80%;animation-delay:2s"></div>
+        <div class="particle" style="width:10px;height:10px;background:var(--accent-gold);top:30%;right:15%;animation-delay:4s"></div>
+        <div class="particle" style="width:5px;height:5px;background:var(--red-primary);bottom:25%;left:25%;animation-delay:1s"></div>
+
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title animate-in">Đặt vé xe khách trực tuyến</h1>
+                <p class="hero-subtitle animate-in animate-delay-1">Hàng ngàn tuyến xe trên toàn quốc — Đặt vé nhanh chóng, an toàn, tiện lợi</p>
+
+                <div class="search-box animate-in animate-delay-2" id="searchBox">
+                    <form action="/search" method="GET" id="mainSearchForm">
+                        <div id="searchError" class="alert alert-danger" style="display:none; margin-bottom: 15px; border-radius: 12px; font-size: 0.9rem;">
+                            <i data-lucide="alert-circle" style="width:16px;height:16px;vertical-align:middle;margin-right:8px"></i>
+                            <span id="searchErrorMessage"></span>
+                        </div>
+                        <div class="search-row">
+                            <div class="search-field">
+                                <label for="departure">Điểm đi</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="map-pin" class="input-icon"></i>
+                                    <select id="departure" name="from">
+                                        <option value="" disabled selected>Chọn điểm đi</option>
+                                        <option value="HN">Hà Nội</option>
+                                        <option value="HCM">TP. Hồ Chí Minh</option>
+                                        <option value="DN">Đà Nẵng</option>
+                                        <option value="HP">Hải Phòng</option>
+                                        <option value="CT">Cần Thơ</option>
+                                        <option value="HUE">Huế</option>
+                                        <option value="NT">Nha Trang</option>
+                                        <option value="DL">Đà Lạt</option>
+                                        <option value="VT">Vũng Tàu</option>
+                                        <option value="QN">Quy Nhơn</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- ... rest of the form ... -->
+
+                            <button type="button" class="swap-btn" id="swapBtn" title="Đổi chiều">
+                                <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i>
+                            </button>
+
+                            <div class="search-field">
+                                <label for="destination">Điểm đến</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="map-pin-check-inside" class="input-icon"></i>
+                                    <select id="destination" name="to">
+                                        <option value="" disabled selected>Chọn điểm đến</option>
+                                        <option value="HN">Hà Nội</option>
+                                        <option value="HCM">TP. Hồ Chí Minh</option>
+                                        <option value="DN">Đà Nẵng</option>
+                                        <option value="HP">Hải Phòng</option>
+                                        <option value="CT">Cần Thơ</option>
+                                        <option value="HUE">Huế</option>
+                                        <option value="NT">Nha Trang</option>
+                                        <option value="DL">Đà Lạt</option>
+                                        <option value="VT">Vũng Tàu</option>
+                                        <option value="QN">Quy Nhơn</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="search-field">
+                                <label for="travelDate">Ngày đi</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="calendar" class="input-icon"></i>
+                                    <input type="date" id="travelDate" name="date">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-search" id="btnSearch">
+                                <i data-lucide="search" style="width:20px;height:20px"></i>
+                                Tìm chuyến xe
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== STATS BAR ===================== -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Nhà xe đối tác</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">2,000+</div>
+            <div class="stat-label">Tuyến đường</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">10M+</div>
+            <div class="stat-label">Lượt đặt vé</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">63</div>
+            <div class="stat-label">Tỉnh thành</div>
+        </div>
+    </div>
+
+    <!-- ===================== ƯU ĐÃI ĐẶC BIỆT ===================== -->
+    <section class="offers-section" id="offers">
+        <div class="container">
+            <div class="section-title">
+                <h2>🎉 Ưu đãi đặc biệt</h2>
+                <p>Những khuyến mãi hấp dẫn dành riêng cho bạn</p>
+                <span class="title-accent"></span>
+            </div>
+
+            <div class="offers-track" id="offersTrack">
+                <div class="offer-card">
+                    <span class="offer-badge">Giảm 30%</span>
+                    <h4>Khách hàng mới</h4>
+                    <p>Giảm 30% cho lần đặt vé đầu tiên. Tối đa 100.000đ cho mọi tuyến đường.</p>
+                    <div class="offer-code"><i data-lucide="copy" style="width:14px;height:14px"></i> NEWUSER30</div>
+                </div>
+                <div class="offer-card">
+                    <span class="offer-badge" style="background:var(--accent-gold)">Flash Sale</span>
+                    <h4>Flash Sale cuối tuần</h4>
+                    <p>Giảm 50% cho tuyến Hà Nội — Sài Gòn. Chỉ áp dụng thứ 7 & Chủ nhật.</p>
+                    <div class="offer-code"><i data-lucide="copy" style="width:14px;height:14px"></i> WEEKEND50</div>
+                </div>
+                <div class="offer-card">
+                    <span class="offer-badge" style="background:var(--accent-blue)">Combo</span>
+                    <h4>Combo khứ hồi</h4>
+                    <p>Đặt vé khứ hồi tiết kiệm đến 25%. Áp dụng cho tất cả tuyến đường nội địa.</p>
+                    <div class="offer-code"><i data-lucide="copy" style="width:14px;height:14px"></i> COMBO25</div>
+                </div>
+                <div class="offer-card">
+                    <span class="offer-badge">Giảm 20%</span>
+                    <h4>Sinh viên ưu đãi</h4>
+                    <p>Giảm 20% cho sinh viên có thẻ sinh viên hợp lệ. Không giới hạn số lần.</p>
+                    <div class="offer-code"><i data-lucide="copy" style="width:14px;height:14px"></i> STUDENT20</div>
+                </div>
+                <div class="offer-card">
+                    <span class="offer-badge" style="background:#27ae60">Miễn phí</span>
+                    <h4>Miễn phí đổi trả</h4>
+                    <p>Đổi trả vé miễn phí trước 24h khởi hành. Hoàn tiền 100% vào ví điện tử.</p>
+                    <div class="offer-code"><i data-lucide="copy" style="width:14px;height:14px"></i> FREECHANGE</div>
+                </div>
+            </div>
+
+            <div class="carousel-nav">
+                <button id="prevOffer" aria-label="Trước"><i data-lucide="chevron-left" style="width:20px;height:20px"></i></button>
+                <button id="nextOffer" aria-label="Tiếp"><i data-lucide="chevron-right" style="width:20px;height:20px"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== TUYẾN ĐƯỜNG PHỔ BIẾN ===================== -->
+    <section class="routes-section" id="routes">
+        <div class="container">
+            <div class="section-title">
+                <h2>🚌 Tuyến đường phổ biến</h2>
+                <p>Những tuyến xe được yêu thích nhất</p>
+                <span class="title-accent"></span>
+            </div>
+
+            <div class="routes-grid">
+                <div class="route-card">
+                    <div class="route-icon"><i data-lucide="bus" style="width:22px;height:22px"></i></div>
+                    <div class="route-info">
+                        <h5>Hà Nội → TP.HCM</h5>
+                        <span>~30 giờ · Giường nằm</span>
+                    </div>
+                    <div class="route-price">từ 450.000đ</div>
+                </div>
+                <div class="route-card">
+                    <div class="route-icon"><i data-lucide="bus" style="width:22px;height:22px"></i></div>
+                    <div class="route-info">
+                        <h5>Hà Nội → Đà Nẵng</h5>
+                        <span>~16 giờ · Giường nằm</span>
+                    </div>
+                    <div class="route-price">từ 320.000đ</div>
+                </div>
+                <div class="route-card">
+                    <div class="route-icon"><i data-lucide="bus" style="width:22px;height:22px"></i></div>
+                    <div class="route-info">
+                        <h5>TP.HCM → Đà Lạt</h5>
+                        <span>~8 giờ · Giường nằm</span>
+                    </div>
+                    <div class="route-price">từ 220.000đ</div>
+                </div>
+                <div class="route-card">
+                    <div class="route-icon"><i data-lucide="bus" style="width:22px;height:22px"></i></div>
+                    <div class="route-info">
+                        <h5>TP.HCM → Nha Trang</h5>
+                        <span>~9 giờ · Giường nằm</span>
+                    </div>
+                    <div class="route-price">từ 250.000đ</div>
+                </div>
+                <div class="route-card">
+                    <div class="route-icon"><i data-lucide="bus" style="width:22px;height:22px"></i></div>
+                    <div class="route-info">
+                        <h5>Hà Nội → Hải Phòng</h5>
+                        <span>~2.5 giờ · Ghế ngồi</span>
+                    </div>
+                    <div class="route-price">từ 120.000đ</div>
+                </div>
+                <div class="route-card">
+                    <div class="route-icon"><i data-lucide="bus" style="width:22px;height:22px"></i></div>
+                    <div class="route-info">
+                        <h5>Đà Nẵng → Huế</h5>
+                        <span>~3 giờ · Ghế ngồi</span>
+                    </div>
+                    <div class="route-price">từ 100.000đ</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== TẠI SAO CHỌN CHÚNG TÔI ===================== -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>✨ Tại sao chọn TicketBus?</h2>
+                <p>Trải nghiệm đặt vé vượt trội</p>
+                <span class="title-accent"></span>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="shield-check" style="width:28px;height:28px"></i></div>
+                    <h4>An toàn & Bảo mật</h4>
+                    <p>Thanh toán được mã hoá SSL. Thông tin cá nhân luôn được bảo vệ tuyệt đối.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="zap" style="width:28px;height:28px"></i></div>
+                    <h4>Đặt vé siêu nhanh</h4>
+                    <p>Chỉ 3 bước đơn giản: Tìm chuyến → Chọn ghế → Thanh toán. Hoàn tất trong 2 phút.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="headphones" style="width:28px;height:28px"></i></div>
+                    <h4>Hỗ trợ 24/7</h4>
+                    <p>Đội ngũ chăm sóc khách hàng luôn sẵn sàng hỗ trợ bạn mọi lúc mọi nơi.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="wallet" style="width:28px;height:28px"></i></div>
+                    <h4>Giá tốt nhất</h4>
+                    <p>Cam kết giá vé cạnh tranh nhất thị trường cùng hàng loạt ưu đãi hấp dẫn.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+
+        // Set min date to today
+        (function() {
+            const dateInput = document.getElementById('travelDate');
+            if (dateInput) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.setAttribute('min', today);
+                dateInput.value = today;
+            }
+        })();
+
+        // Form Validation & Submit
+        document.getElementById('mainSearchForm').addEventListener('submit', function(e) {
+            const from = document.getElementById('departure').value;
+            const to = document.getElementById('destination').value;
+            const date = document.getElementById('travelDate').value;
+            const errorBox = document.getElementById('searchError');
+            const errorMessage = document.getElementById('searchErrorMessage');
+            const today = new Date().toISOString().split('T')[0];
+
+            if (!from || !to || !date) {
+                e.preventDefault();
+                errorMessage.textContent = 'Vui lòng chọn đầy đủ Điểm đi, Điểm đến và Ngày đi';
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            if (from === to) {
+                e.preventDefault();
+                errorMessage.textContent = 'Điểm đi và điểm đến không được trùng nhau';
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            if (date < today) {
+                e.preventDefault();
+                errorMessage.textContent = 'Ngày đi không được chọn trong quá khứ';
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            errorBox.style.display = 'none';
+        });
+
+        // Swap Origin & Destination
+        document.getElementById('swapBtn').addEventListener('click', function() {
+            const from = document.getElementById('departure');
+            const to = document.getElementById('destination');
+            const temp = from.value;
+            from.value = to.value;
+            to.value = temp;
+            document.getElementById('searchError').style.display = 'none';
+        });
+
+        // Offers Carousel Scroll
+        (function() {
+            const track = document.getElementById('offersTrack');
+            const scrollAmount = 340;
+
+            document.getElementById('prevOffer').addEventListener('click', function() {
+                track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            });
+            document.getElementById('nextOffer').addEventListener('click', function() {
+                track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            });
+        })();
+
+        // Copy Offer Code
+        document.querySelectorAll('.offer-code').forEach(function(el) {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', function() {
+                const code = this.textContent.trim();
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(code);
+                }
+                const original = this.innerHTML;
+                this.innerHTML = '<i data-lucide="check" style="width:14px;height:14px"></i> Đã sao chép!';
+                lucide.createIcons();
+                setTimeout(function() {
+                    el.innerHTML = original;
+                    lucide.createIcons();
+                }, 2000);
+            });
+        });
+
+        // Scroll animation observer
+        (function() {
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.offer-card, .route-card, .feature-card').forEach(function(el) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                observer.observe(el);
+            });
+        })();
+    </script>
+</main>
+</body>
+</html>

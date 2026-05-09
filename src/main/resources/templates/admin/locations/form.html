@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout-admin}">
+<head>
+    <title>Thêm/Sửa địa điểm</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 th:text="${location.id != null ? 'Sửa địa điểm' : 'Thêm địa điểm mới'}"></h3>
+            <a th:href="@{/admin/locations}" class="btn btn-secondary">
+                <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                Quay lại
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="${location.id != null} ? @{/admin/locations/update/{id}(id=${location.id})} : @{/admin/locations/save}" 
+                      method="post" th:object="${location}">
+                    
+                    <div class="form-group mb-3">
+                        <label for="name">Tên địa điểm <span class="text-danger">*</span></label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="name" 
+                               th:field="*{name}"
+                               required>
+                        <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="provinceCode">Mã tỉnh <span class="text-danger">*</span></label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="provinceCode" 
+                               th:field="*{provinceCode}"
+                               required
+                               maxlength="10"
+                               placeholder="VD: HN, HCM, DN">
+                        <div class="text-danger" th:if="${#fields.hasErrors('provinceCode')}" th:errors="*{provinceCode}"></div>
+                        <small class="form-text text-muted">Mã tỉnh duy nhất, không trùng lặp</small>
+                    </div>
+
+                    <div th:if="${error}" class="alert alert-danger">
+                        <span th:text="${error}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-danger">
+                            <i data-lucide="save" style="width: 16px; height: 16px;"></i>
+                            <span th:text="${location.id != null ? 'Cập nhật' : 'Thêm mới'}"></span>
+                        </button>
+                        <a th:href="@{/admin/locations}" class="btn btn-secondary">
+                            <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+                            Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

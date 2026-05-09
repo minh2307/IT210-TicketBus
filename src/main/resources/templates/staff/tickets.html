@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout-staff}">
+<head>
+    <title>Quản lý vé - Staff TicketBus</title>
+    <link rel="stylesheet" th:href="@{/css/staff-tickets.css}">
+    <style>
+        .filter-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        .filter-label {
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .form-control-dark {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: var(--radius-sm);
+        }
+        .form-control-dark:focus {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--red-primary);
+            color: var(--text-primary);
+            box-shadow: none;
+        }
+        .btn-primary-dark {
+            background: var(--red-primary);
+            border: none;
+            color: white;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition);
+        }
+        .btn-primary-dark:hover {
+            background: var(--red-dark);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <section class="staff-section" style="padding-top: 0;">
+            <h1 class="page-title">
+                <i data-lucide="ticket" style="width:28px;height:28px"></i>
+                Danh sách vé
+            </h1>
+
+            <!-- Flash Messages -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show mb-4" style="background: rgba(40,167,69,0.1); border: 1px solid rgba(40,167,69,0.2); color: #28a745;">
+                <i data-lucide="check-circle" style="width: 18px; height: 18px; margin-right: 8px;"></i>
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="close" data-dismiss="alert" style="color: inherit; opacity: 1;">&times;</button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show mb-4" style="background: rgba(220,53,69,0.1); border: 1px solid rgba(220,53,69,0.2); color: #dc3545;">
+                <i data-lucide="alert-circle" style="width: 18px; height: 18px; margin-right: 8px;"></i>
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="close" data-dismiss="alert" style="color: inherit; opacity: 1;">&times;</button>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-card">
+                <form th:action="@{/staff/tickets}" method="GET" class="row">
+                    <div class="col-md-5">
+                        <label class="filter-label">Tìm kiếm</label>
+                        <input type="text" name="search" th:value="${searchTerm}" class="form-control form-control-dark" placeholder="Mã vé, tên hoặc SĐT khách hàng...">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="filter-label">Trạng thái</label>
+                        <select name="status" class="form-control form-control-dark">
+                            <option value="ALL" th:selected="${currentStatus == 'ALL'}">Tất cả trạng thái</option>
+                            <option value="PENDING" th:selected="${currentStatus == 'PENDING'}">Chờ thanh toán</option>
+                            <option value="PAID" th:selected="${currentStatus == 'PAID'}">Đã thanh toán</option>
+                            <option value="CANCELLED" th:selected="${currentStatus == 'CANCELLED'}">Đã hủy</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary-dark w-100 py-2">
+                            <i data-lucide="search" style="width: 18px; height: 18px; margin-right: 4px;"></i>
+                            Tìm kiếm
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <table class="tickets-table">
+                    <thead>
+                        <tr>
+                            <th>Mã vé</th>
+                            <th>Khách hàng</th>
+                            <th>Tuyến xe</th>
+                            <th>Ngày đi</th>
+                            <th>Ghế</th>
+                            <th>Giá vé</th>
+                            <th>Trạng thái</th>
+                            <th class="text-right">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(tickets)}">
+                            <td colspan="8" class="text-center py-5 text-muted">Không tìm thấy vé nào phù hợp</td>
+                        </tr>
+                        <tr th:each="ticket : ${tickets}">
+                            <td class="code-cell"><strong th:text="${ticket.ticketCode}">T001</strong></td>
+                            <td>
+                                <div class="font-weight-bold" th:text="${ticket.passengerName}">Nguyễn Văn A</div>
+                                <small class="text-muted" th:text="${ticket.passengerPhone}">0987654321</small>
+                            </td>
+                            <td th:text="${ticket.originName + ' → ' + ticket.destinationName}">Hà Nội → Sapa</td>
+                            <td th:text="${#temporals.format(ticket.departureTime, 'HH:mm dd/MM/yyyy')}">10/10/2026</td>
+                            <td><span class="badge badge-light px-2 py-1" th:text="${ticket.seatNumber}">A1</span></td>
+                            <td class="font-weight-bold text-white" th:text="${#numbers.formatDecimal(ticket.totalPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">200,000đ</td>
+                            <td>
+                                <span th:if="${ticket.status == 'PENDING'}" class="badge badge-warning px-3 py-2" style="border-radius: 20px; color: #856404; background-color: #fff3cd;">Chờ thanh toán</span>
+                                <span th:if="${ticket.status == 'PAID'}" class="badge badge-success px-3 py-2" style="border-radius: 20px; color: #155724; background-color: #d4edda;">Đã thanh toán</span>
+                                <span th:if="${ticket.status == 'CANCELLED'}" class="badge badge-danger px-3 py-2" style="border-radius: 20px; color: #721c24; background-color: #f8d7da;">Đã hủy</span>
+                            </td>
+                            <td class="text-right">
+                                <div class="action-cell justify-content-end">
+                                    <th:block th:if="${ticket.status == 'PENDING'}">
+                                        <form th:action="@{/staff/tickets/{id}/confirm(id=${ticket.id})}" method="POST" onsubmit="return confirm('Xác nhận khách hàng đã thanh toán vé này?')">
+                                            <button type="submit" class="btn-confirm-ticket">Xác nhận</button>
+                                        </form>
+                                        <button class="btn-cancel-ticket js-cancel-ticket" th:attr="data-id=${ticket.id}">Hủy</button>
+                                    </th:block>
+                                    <th:block th:unless="${ticket.status == 'PENDING'}">
+                                        <button class="btn-refresh" style="margin: 0; padding: 4px 12px;">Chi tiết</button>
+                                    </th:block>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Hidden form for cancellation -->
+        <form id="cancelForm" method="POST" style="display: none;">
+            <input type="hidden" name="reason" id="cancelReason">
+        </form>
+    </div>
+
+    <th:block layout:fragment="custom-js">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+
+            // Sửa lỗi triệt để bằng Event Listener
+            document.querySelectorAll('.js-cancel-ticket').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    if (id) {
+                        handleCancel(id);
+                    }
+                });
+            });
+        });
+
+        function handleCancel(ticketId) {
+            const reason = prompt('Nhập lý do hủy vé:');
+            if (reason === null) return;
+            
+            const form = document.getElementById('cancelForm');
+            form.action = '/staff/tickets/' + ticketId + '/cancel';
+            document.getElementById('cancelReason').value = reason || 'Nhân viên hủy vé';
+            form.submit();
+        }
+    </script>
+    </th:block>
+</body>
+</html>
+
+

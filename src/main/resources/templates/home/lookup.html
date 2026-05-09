@@ -1,0 +1,159 @@
+<!-- === home/lookup.html === -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout-user}">
+<head>
+    <title>Tra cứu vé</title>
+    <link rel="stylesheet" th:href="@{/css/lookup.css}">
+</head>
+<body>
+<main layout:fragment="content">
+
+    <section class="lookup-section" id="lookupSection">
+        <div class="container">
+            <h1 class="page-title">
+                <i data-lucide="search" style="width:28px;height:28px"></i>
+                Tra cứu vé xe
+            </h1>
+
+            <!-- Search Form -->
+            <div class="lookup-form-container">
+                <form th:action="@{/lookup}" method="POST">
+                    <div class="lookup-row">
+                        <div class="form-group">
+                            <label for="ticketCode">Mã vé</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="hash" class="input-icon"></i>
+                                <input type="text" id="ticketCode" name="code" th:value="${code}" placeholder="VD: TK-1234567890-A01" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Số điện thoại</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="phone" class="input-icon"></i>
+                                <input type="tel" id="phone" name="phone" th:value="${phone}" placeholder="0901234567" required>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center" style="height: 80px;">
+                            <button type="submit" class="btn-lookup " id="btnLookup">
+                                <i data-lucide="search" style="width:18px;height:18px"></i>
+                                Tra cứu
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <!-- Error / Messages -->
+            <div th:if="${errorMessage}" class="alert alert-danger" style="border-radius:12px; margin-top:20px;">
+                <i data-lucide="alert-circle" style="width:16px;height:16px;vertical-align:middle;margin-right:8px"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+            <div th:if="${successMessage}" class="alert alert-success" style="border-radius:12px; margin-top:20px;">
+                <i data-lucide="check-circle" style="width:16px;height:16px;vertical-align:middle;margin-right:8px"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+
+            <!-- Result Card -->
+            <div class="ticket-card" id="ticketCard" th:if="${ticket != null}">
+                <div class="ticket-header">
+                    <div class="ticket-code-section">
+                        <span class="ticket-label">Mã vé</span>
+                        <span class="ticket-code" th:text="${ticket.ticketCode}">—</span>
+                    </div>
+                    <span th:if="${ticket.status == 'PENDING'}" class="ticket-badge badge-pending">Chờ thanh toán</span>
+                    <span th:if="${ticket.status == 'PAID'}" class="ticket-badge badge-paid">Đã thanh toán</span>
+                    <span th:if="${ticket.status == 'CANCELLED'}" class="ticket-badge badge-cancelled">Đã hủy</span>
+                </div>
+
+                <div class="ticket-body">
+                    <div class="ticket-info-grid">
+                        <div class="ticket-info-item">
+                            <i data-lucide="user" style="width:16px;height:16px"></i>
+                            <div>
+                                <span class="info-label">Hành khách</span>
+                                <span class="info-value" th:text="${ticket.passengerName}">—</span>
+                            </div>
+                        </div>
+                        <div class="ticket-info-item">
+                            <i data-lucide="phone" style="width:16px;height:16px"></i>
+                            <div>
+                                <span class="info-label">SĐT</span>
+                                <span class="info-value" th:text="${ticket.passengerPhone}">—</span>
+                            </div>
+                        </div>
+                        <div class="ticket-info-item">
+                            <i data-lucide="mail" style="width:16px;height:16px"></i>
+                            <div>
+                                <span class="info-label">Email</span>
+                                <span class="info-value" th:text="${ticket.passengerEmail}">—</span>
+                            </div>
+                        </div>
+                        <div class="ticket-info-item">
+                            <i data-lucide="route" style="width:16px;height:16px"></i>
+                            <div>
+                                <span class="info-label">Tuyến</span>
+                                <span class="info-value" th:text="${ticket.originName + ' → ' + ticket.destinationName}">—</span>
+                            </div>
+                        </div>
+                        <div class="ticket-info-item">
+                            <i data-lucide="clock" style="width:16px;height:16px"></i>
+                            <div>
+                                <span class="info-label">Khởi hành</span>
+                                <span class="info-value" th:text="${ticket.departureTime != null ? ticket.departureTime : '—'}">10:00 01/01/2024</span>
+                            </div>
+                        </div>
+                        <div class="ticket-info-item">
+                            <i data-lucide="armchair" style="width:16px;height:16px"></i>
+                            <div>
+                                <span class="info-label">Ghế</span>
+                                <span class="info-value" th:text="${ticket.seatNumber}">—</span>
+                            </div>
+                        </div>
+                        <div class="ticket-info-item">
+                            <i data-lucide="bus" style="width:16px;height:16px"></i>
+                            <div>
+                                <span class="info-label">Loại xe</span>
+                                <span class="info-value" th:text="${ticket.busType}">—</span>
+                            </div>
+                        </div>
+                        <div class="ticket-info-item">
+                            <i data-lucide="wallet" style="width:16px;height:16px"></i>
+                            <div>
+                                <span class="info-label">Tổng tiền</span>
+                                <span class="info-value" th:text="${#numbers.formatDecimal(ticket.totalPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cancel reason if cancelled -->
+                    <div class="cancel-reason-box" th:if="${ticket.status == 'CANCELLED' and ticket.cancelReason != null}">
+                        <i data-lucide="alert-triangle" style="width:16px;height:16px"></i>
+                        <span th:text="${'Lý do: ' + ticket.cancelReason}">—</span>
+                    </div>
+                </div>
+
+                <!-- Cancel button (CORE-09) -->
+                <div class="ticket-footer" th:if="${ticket.status == 'PENDING'}">
+                    <form th:action="@{/lookup/cancel}" method="POST" onsubmit="return confirm('Bạn chắc chắn muốn gửi yêu cầu hủy vé này?')">
+                        <input type="hidden" name="ticketCode" th:value="${ticket.ticketCode}">
+                        <input type="hidden" name="phone" th:value="${phone}">
+                        <button type="submit" class="btn-cancel-ticket">
+                            <i data-lucide="x-circle" style="width:18px;height:18px"></i>
+                            Hủy vé
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+        });
+    </script>
+
+</main>
+</body>
+</html>

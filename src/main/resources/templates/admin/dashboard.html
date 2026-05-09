@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout-admin}">
+<head>
+    <title>Admin Dashboard - Bus Ticket Pro</title>
+</head>
+<body>
+    <div layout:fragment="content" class="dashboard-container">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="page-title">Admin Dashboard</h3>
+            <div class="text-muted">
+                <small>Chào mừng trở lại, <span class="text-white font-weight-bold" th:text="${session.user?.fullName ?: 'Admin'}"></span></small>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 th:text="${totalBuses}">0</h4>
+                                <p class="mb-0">Tổng số xe</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i data-lucide="truck" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card bg-danger text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 th:text="${pendingTicketsCount ?: '0'}">0</h4>
+                                <p class="mb-0">Vé chờ xác nhận</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i data-lucide="clock" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 th:text="${totalRoutes ?: '0'}">0</h4>
+                                <p class="mb-0">Tuyến xe</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i data-lucide="map" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 th:text="${totalUsers ?: '0'}">0</h4>
+                                <p class="mb-0">Người dùng</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i data-lucide="users" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card action-card">
+                    <div class="card-header">
+                        <h5>Thao tác nhanh</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <a th:href="@{/admin/buses}" class="btn btn-outline-dark-theme btn-block d-flex align-items-center justify-content-center">
+                                    <i data-lucide="bus"></i>
+                                    Quản lý xe
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a th:href="@{/admin/routes}" class="btn btn-outline-dark-theme btn-block d-flex align-items-center justify-content-center">
+                                    <i data-lucide="route"></i>
+                                    Quản lý tuyến
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a th:href="@{/admin/locations}" class="btn btn-outline-dark-theme btn-block d-flex align-items-center justify-content-center">
+                                    <i data-lucide="map-pin"></i>
+                                    Địa điểm
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a th:href="@{/admin/reports}" class="btn btn-outline-dark-theme btn-block d-flex align-items-center justify-content-center">
+                                    <i data-lucide="bar-chart"></i>
+                                    Báo cáo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Activity -->
+        <div class="row">
+            <!-- Recent Bookings Table -->
+            <div class="col-md-8 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>Đặt vé gần đây</h5>
+                        <a th:href="@{/admin/tickets}" class="btn btn-sm btn-link text-muted">Xem tất cả</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Mã vé</th>
+                                        <th>Khách hàng</th>
+                                        <th>Ngày đặt</th>
+                                        <th>Trạng thái</th>
+                                        <th class="text-right">Tổng tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="ticket : ${recentTickets}">
+                                        <td>
+                                            <span class="font-weight-bold" th:text="${ticket.ticketCode}">TKT123</span>
+                                        </td>
+                                        <td th:text="${ticket.passengerName}">Nguyễn Văn A</td>
+                                        <td th:text="${#temporals.format(ticket.bookedAt, 'dd/MM HH:mm')}">01/01 10:00</td>
+                                        <td>
+                                            <span th:class="${'badge ' + 
+                                                (ticket.status.name() == 'PAID' ? 'badge-success' : 
+                                                 ticket.status.name() == 'PENDING' ? 'badge-warning' : 'badge-danger')}"
+                                                  th:text="${ticket.status}">Đã thanh toán</span>
+                                        </td>
+                                        <td class="text-right font-weight-bold" 
+                                            th:text="${#numbers.formatDecimal(ticket.totalPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">50,000đ</td>
+                                    </tr>
+                                    <tr th:if="${recentTickets == null or recentTickets.empty}">
+                                        <td colspan="5" class="text-center py-4 text-muted">Chưa có hoạt động đặt vé nào.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Buses / System Status -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5>Xe mới cập nhật</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <th:block th:if="${recentBuses != null and !recentBuses.empty}">
+                                <div th:each="bus : ${recentBuses}" class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-bottom-dark">
+                                    <div>
+                                        <h6 class="mb-1 text-white" th:text="${bus.licensePlate}">29A-12345</h6>
+                                        <small class="text-muted" th:text="${bus.companyName}">Hãng xe Hưng Thịnh</small>
+                                    </div>
+                                    <span th:class="${'badge ' + (bus.status.name() == 'ACTIVE' ? 'badge-success' : 'badge-secondary')}" 
+                                          th:text="${bus.status}">ACTIVE</span>
+                                </div>
+                            </th:block>
+                            <div th:if="${recentBuses == null or recentBuses.empty}" class="p-4 text-center text-muted">
+                                Không có dữ liệu xe mới.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="custom-js">
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+        });
+    </script>
+    </th:block>
+</body>
+</html>
+

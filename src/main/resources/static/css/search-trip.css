@@ -1,0 +1,472 @@
+/* === search-trip.css === */
+
+/* ===================== VARIABLES ===================== */
+:root {
+    --red-primary: #e74c3c;
+    --red-dark: #c0392b;
+    --red-light: #fdedec;
+    --accent-blue: #3498db;
+    --accent-gold: #f39c12;
+    --bg-dark: #0f1117;
+    --bg-card: #1a1d27;
+    --bg-card-hover: #22263a;
+    --text-primary: #f8f9fa;
+    --text-secondary: #a0a3b1;
+    --text-muted: #6c7293;
+    --border-color: rgba(255,255,255,0.08);
+    --glass-bg: rgba(255,255,255,0.04);
+    --shadow-lg: 0 20px 60px rgba(0,0,0,0.4);
+    --shadow-card: 0 4px 20px rgba(0,0,0,0.3);
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===================== SEARCH HEADER ===================== */
+.search-header {
+    background: linear-gradient(135deg, #1a1d27 0%, #0f1117 100%);
+    padding: 40px 0 30px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.search-summary {
+    margin-bottom: 20px;
+}
+
+.route-label {
+    color: var(--text-secondary);
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Inline Search Box */
+.search-box-inline {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+}
+
+.search-box-inline .search-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.search-box-inline .search-field {
+    flex: 1;
+    min-width: 160px;
+}
+
+.search-box-inline .search-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.search-box-inline .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-box-inline .input-icon {
+    position: absolute;
+    left: 12px;
+    color: var(--text-muted);
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+}
+
+.search-box-inline select,
+.search-box-inline input[type="date"] {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color var(--transition);
+    -webkit-appearance: none;
+}
+
+.search-box-inline select:focus,
+.search-box-inline input[type="date"]:focus {
+    border-color: var(--red-primary);
+}
+
+.search-box-inline select option {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+}
+
+.search-box-inline .swap-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--red-primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--transition), background var(--transition);
+    flex-shrink: 0;
+    margin-bottom: 2px;
+}
+
+.search-box-inline .swap-btn:hover {
+    background: var(--red-dark);
+    transform: rotate(180deg);
+}
+
+.search-box-inline .btn-search {
+    padding: 10px 24px;
+    background: linear-gradient(135deg, var(--red-primary), var(--red-dark));
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all var(--transition);
+    white-space: nowrap;
+    margin-bottom: 2px;
+}
+
+.search-box-inline .btn-search:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+}
+
+/* ===================== RESULTS SECTION ===================== */
+.results-section {
+    background: var(--bg-dark);
+    min-height: 50vh;
+    padding: 30px 0 60px;
+}
+
+/* Loading State */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+    color: var(--text-secondary);
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--border-color);
+    border-top-color: var(--red-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.empty-icon {
+    width: 100px;
+    height: 100px;
+    background: var(--glass-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: var(--text-muted);
+}
+
+.empty-state h3 {
+    color: var(--text-primary);
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* Results Count */
+.results-count {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 20px;
+    padding-left: 4px;
+}
+
+.results-count span {
+    color: var(--red-primary);
+    font-weight: 700;
+    font-size: 18px;
+}
+
+/* ===================== TRIP CARDS ===================== */
+.trips-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.trip-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition);
+}
+
+.trip-card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(231, 76, 60, 0.3);
+    box-shadow: var(--shadow-card);
+    transform: translateY(-2px);
+}
+
+/* Card Header */
+.trip-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.trip-route {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.trip-origin,
+.trip-destination {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.trip-origin i,
+.trip-destination i {
+    color: var(--red-primary);
+}
+
+.trip-arrow {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-muted);
+}
+
+.arrow-line {
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--red-primary), var(--accent-gold));
+    border-radius: 1px;
+}
+
+.trip-price {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--red-primary);
+    white-space: nowrap;
+}
+
+/* Card Body */
+.trip-card-body {
+    padding: 16px 24px;
+}
+
+.trip-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.trip-info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.trip-info-item i {
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.trip-info-item strong {
+    color: var(--text-primary);
+}
+
+.seats-available {
+    color: #27ae60 !important;
+    font-size: 16px;
+}
+
+/* Card Footer */
+.trip-card-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-select-seat {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 28px;
+    background: linear-gradient(135deg, var(--red-primary), var(--red-dark));
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    transition: all var(--transition);
+    border: none;
+    cursor: pointer;
+}
+
+.btn-select-seat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+/* ===================== TOAST ===================== */
+.toast-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toast {
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    color: white;
+    font-size: 14px;
+    animation: toastIn 0.3s ease;
+    max-width: 400px;
+    backdrop-filter: blur(20px);
+}
+
+.toast-info {
+    background: rgba(52, 152, 219, 0.9);
+    border: 1px solid rgba(52, 152, 219, 0.5);
+}
+
+.toast-success {
+    background: rgba(39, 174, 96, 0.9);
+    border: 1px solid rgba(39, 174, 96, 0.5);
+}
+
+.toast-error {
+    background: rgba(231, 76, 60, 0.9);
+    border: 1px solid rgba(231, 76, 60, 0.5);
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toast-hide {
+    animation: toastOut 0.3s ease forwards;
+}
+
+@keyframes toastIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes toastOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 768px) {
+    .search-box-inline .search-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-box-inline .swap-btn {
+        align-self: center;
+    }
+
+    .search-box-inline .btn-search {
+        justify-content: center;
+    }
+
+    .trip-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .trip-route {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .trip-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .search-title {
+        font-size: 22px;
+    }
+}

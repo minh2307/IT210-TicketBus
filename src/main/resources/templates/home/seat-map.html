@@ -1,0 +1,178 @@
+<!-- === home/seat-map.html === -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout-user}">
+<head>
+    <title>Chọn ghế</title>
+    <link rel="stylesheet" th:href="@{/css/seat-map.css}">
+</head>
+<body>
+<main layout:fragment="content">
+
+    <section class="seat-map-section" id="seatMapSection">
+        <div class="container">
+
+            <!-- Back button -->
+            <a th:href="@{/search(from=${trip.route.origin.provinceCode}, to=${trip.route.destination.provinceCode}, date=${#temporals.format(trip.departureTime, 'yyyy-MM-dd')})}" class="btn-back">
+                <i data-lucide="arrow-left" style="width:18px;height:18px"></i>
+                Quay lại
+            </a>
+
+            <h1 class="page-title">
+                <i data-lucide="layout-grid" style="width:28px;height:28px"></i>
+                Sơ đồ ghế ngồi
+            </h1>
+
+            <div th:if="${errorMessage}" class="alert alert-danger" style="margin-bottom: 20px; border-radius: 12px;">
+                <i data-lucide="alert-circle" style="width:18px;height:18px;vertical-align:middle;margin-right:8px"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <!-- Legend -->
+            <div class="seat-legend">
+                <div class="legend-item">
+                    <div class="legend-box available"></div>
+                    <span>Còn trống</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box selected"></div>
+                    <span>Bạn chọn</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box pending"></div>
+                    <span>Người khác giữ</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box booked"></div>
+                    <span>Đã đặt</span>
+                </div>
+            </div>
+
+            <!-- Seat Grid Container -->
+            <div class="seat-map-wrapper">
+                <div class="bus-visual">
+                    <div class="bus-header">
+                        <div class="bus-windshield">
+                            <i data-lucide="bus" style="width:24px;height:24px"></i>
+                            <span>TÀI XẾ</span>
+                        </div>
+                    </div>
+                    <div class="bus-body">
+                        <!-- Floor 1 -->
+                        <div class="floor-section">
+                            <div class="floor-label">Tầng 1</div>
+                            <div class="seat-grid" style="grid-template-columns: repeat(3, 1fr); gap: 12px 20px;">
+                                <div th:each="seat : ${seats}" th:if="${seat.floor == 1}">
+                                    <form th:action="@{/seat-map/toggle}" method="POST">
+                                        <input type="hidden" name="seatId" th:value="${seat.seatId}">
+                                        <input type="hidden" name="tripId" th:value="${tripId}">
+                                        <button type="submit" 
+                                                class="seat" 
+                                                th:classappend="${seat.status == 'AVAILABLE' ? 'seat-available' : (seat.status == 'PENDING' ? 'seat-selected' : 'seat-booked')}"
+                                                th:disabled="${seat.status == 'BOOKED'}"
+                                                th:title="${seat.seatNumber}">
+                                            <i data-lucide="armchair" style="width:20px;height:20px"></i>
+                                            <span class="seat-label" th:text="${seat.seatNumber}">A1</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Floor 2 (Optional) -->
+                        <div class="floor-section" th:if="${hasFloor2}">
+                            <div class="floor-label">Tầng 2</div>
+                            <div class="seat-grid" style="grid-template-columns: repeat(3, 1fr); gap: 12px 20px;">
+                                <div th:each="seat : ${seats}" th:if="${seat.floor == 2}">
+                                    <form th:action="@{/seat-map/toggle}" method="POST">
+                                        <input type="hidden" name="seatId" th:value="${seat.seatId}">
+                                        <input type="hidden" name="tripId" th:value="${tripId}">
+                                        <button type="submit" 
+                                                class="seat" 
+                                                th:classappend="${seat.status == 'AVAILABLE' ? 'seat-available' : (seat.status == 'PENDING' ? 'seat-selected' : 'seat-booked')}"
+                                                th:disabled="${seat.status == 'BOOKED'}"
+                                                th:title="${seat.seatNumber}">
+                                            <i data-lucide="armchair" style="width:20px;height:20px"></i>
+                                            <span class="seat-label" th:text="${seat.seatNumber}">A1</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selected seats summary -->
+            <div class="selected-summary" th:if="${not #lists.isEmpty(heldSeatIds)}">
+                <div class="summary-content">
+                    <div class="summary-info">
+                        <h3>Ghế đã chọn</h3>
+                        <div class="selected-seats-list">
+                            <span class="seat-tag" th:each="seat : ${heldSeats}" 
+                                  th:text="${seat.seatNumber}">A1</span>
+                        </div>
+                    </div>
+                    <div class="summary-action">
+                        <p class="hold-timer" id="countdownTimer">Vui lòng hoàn tất đặt vé sớm</p>
+                        <a th:href="@{/booking(tripId=${tripId}, seatIds=${heldSeatIds})}" class="btn-continue">
+                            <i data-lucide="ticket" style="width:18px;height:18px"></i>
+                            Tiếp tục đặt vé
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="refresh-indicator">
+                <i data-lucide="info" style="width:14px;height:14px"></i>
+                <span>Tải lại trang để cập nhật sơ đồ ghế mới nhất</span>
+            </div>
+
+        </div>
+    </section>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            
+            // Countdown Timer Logic
+            const heldSeats = /*[[${heldSeats}]]*/ [];
+            if (heldSeats && heldSeats.length > 0) {
+                // Find the earliest expiration time among held seats
+                let earliestExpiry = null;
+                heldSeats.forEach(seat => {
+                    if (seat.lockedUntil) {
+                        const expiry = new Date(seat.lockedUntil);
+                        if (!earliestExpiry || expiry < earliestExpiry) {
+                            earliestExpiry = expiry;
+                        }
+                    }
+                });
+
+                if (earliestExpiry) {
+                    const timerDisplay = document.getElementById('countdownTimer');
+                    
+                    const updateTimer = () => {
+                        const now = new Date();
+                        const diff = earliestExpiry - now;
+                        
+                        if (diff <= 0) {
+                            timerDisplay.innerHTML = '<span style="color:var(--red-primary)">Hết thời gian giữ chỗ! Vui lòng tải lại trang.</span>';
+                            clearInterval(timerInterval);
+                            return;
+                        }
+                        
+                        const minutes = Math.floor(diff / 1000 / 60);
+                        const seconds = Math.floor((diff / 1000) % 60);
+                        timerDisplay.innerHTML = `Giữ chỗ trong: <strong style="color:var(--accent-gold)">${minutes}:${seconds.toString().padStart(2, '0')}</strong>`;
+                    };
+                    
+                    updateTimer();
+                    const timerInterval = setInterval(updateTimer, 1000);
+                }
+            }
+        });
+    </script>
+
+</main>
+</body>
+</html>

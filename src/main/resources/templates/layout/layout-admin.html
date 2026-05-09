@@ -1,0 +1,415 @@
+<!-- === layout/layout-admin.html === -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - Admin TicketBus">Admin Panel</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" th:href="@{/css/staff-layout.css(v=1.2)}">
+
+    <style layout:fragment="custom-css"></style>
+    <style>
+        :root {
+            --bg-card: #1a1d27;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --sidebar-active: #e74c3c;
+            --text-primary: #f8f9fa;
+            --text-muted: #a0a3b1;
+        }
+
+        /* Global Theme Fixes */
+        body {
+            background-color: #0f1117 !important;
+            color: var(--text-primary) !important;
+        }
+
+        /* Card & Containers */
+        .card {
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .card-header {
+            background: rgba(255, 255, 255, 0.02) !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            padding: 16px 24px;
+        }
+
+        .card-header h5,
+        .card-header h3 {
+            margin-bottom: 0;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--text-primary) !important;
+        }
+
+        /* Tables */
+        .table {
+            color: var(--text-primary) !important;
+            margin-bottom: 0;
+            background: transparent !important;
+        }
+
+        .table thead th {
+            background: rgba(255, 255, 255, 0.03) !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            border-top: none !important;
+            color: var(--text-muted) !important;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 14px 20px;
+        }
+
+        .table td {
+            border-bottom: 1px solid var(--border-color) !important;
+            padding: 16px 20px;
+            vertical-align: middle;
+            font-size: 14px;
+            color: var(--text-primary) !important;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(160, 157, 157, 0.044) !important;
+            transition: background 0.2s ease;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.01) !important;
+        }
+
+        /* List Groups (Fixes white background in dashboard) */
+        .list-group {
+            background: transparent !important;
+        }
+
+        .list-group-item {
+            background-color: transparent !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-primary) !important;
+            padding: 15px 24px;
+        }
+
+        .list-group-item:hover {
+            background-color: rgba(255, 255, 255, 0.03) !important;
+        }
+
+        .list-group-item h6 {
+            color: var(--text-primary) !important;
+            font-weight: 600;
+        }
+
+        /* Specific Cell Styles */
+        .code-cell {
+            font-family: monospace;
+            color: #f39c12 !important;
+            /* accent-gold */
+            font-weight: 700;
+        }
+
+        .action-cell {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        /* Badge refinements */
+        .badge {
+            font-size: 10px;
+            padding: 5px 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border-radius: 4px;
+        }
+
+        .badge-dark {
+            background: rgba(255, 255, 255, 0.08) !important;
+            color: var(--text-muted) !important;
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-view {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+
+        .btn-view:hover {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+        }
+
+        .btn-edit {
+            background: rgba(243, 156, 18, 0.1);
+            color: #f39c12;
+            border: 1px solid rgba(243, 156, 18, 0.2);
+        }
+
+        .btn-edit:hover {
+            background: rgba(243, 156, 18, 0.2);
+            color: #f39c12;
+        }
+
+        .btn-delete {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.2);
+        }
+
+        .btn-delete:hover {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+
+        /* Forms */
+        .form-control,
+        .form-select {
+            background: rgba(255, 255, 255, 0.04) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            border-radius: var(--radius-sm);
+            padding: 10px 15px;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: var(--sidebar-active) !important;
+            box-shadow: none !important;
+            color: var(--text-primary) !important;
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        label {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: transparent !important;
+            padding: 0;
+            margin-bottom: 24px;
+        }
+
+        .breadcrumb-item a {
+            color: var(--sidebar-active);
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .breadcrumb-item+.breadcrumb-item::before {
+            color: var(--text-muted);
+        }
+
+        /* Pagination */
+        .pagination .page-link {
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            padding: 8px 16px;
+            margin: 0 2px;
+            border-radius: 6px;
+        }
+
+        .pagination .page-link:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .pagination .page-item.active .page-link {
+            background: var(--sidebar-active) !important;
+            border-color: var(--sidebar-active) !important;
+            color: white !important;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background: rgba(255, 255, 255, 0.02) !important;
+            color: var(--text-muted) !important;
+            opacity: 0.3;
+        }
+
+        /* Utility Classes */
+        .bg-white {
+            background-color: var(--bg-card) !important;
+        }
+
+        .text-dark {
+            color: var(--text-primary) !important;
+        }
+
+        .border-top {
+            border-color: var(--border-color) !important;
+        }
+
+        /* Buttons Fix */
+        .btn-outline-primary {
+            border-color: var(--sidebar-active);
+            color: var(--sidebar-active);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--sidebar-active);
+            border-color: var(--sidebar-active);
+            color: white;
+        }
+
+        .btn-outline-dark-theme {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            gap: 10px;
+        }
+
+        .btn-outline-dark-theme:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--sidebar-active);
+            color: var(--sidebar-active);
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-outline-dark-theme i {
+            width: 18px;
+            height: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="staff-sidebar" id="adminSidebar">
+        <div class="sidebar-header">
+            <i data-lucide="bus" class="logo-icon" style="width:28px;height:28px"></i>
+            <h2>TICKETBUS</h2>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-group">
+                <div class="nav-group-label">Chính</div>
+                <a th:href="@{/admin/dashboard}" class="sidebar-link">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a th:href="@{/admin/reports}" class="sidebar-link">
+                    <i data-lucide="bar-chart-2"></i>
+                    <span>Báo cáo thống kê</span>
+                </a>
+            </div>
+
+            <div class="nav-group" style="margin-top:24px">
+                <div class="nav-group-label">Quản lý hệ thống</div>
+                <a th:href="@{/admin/locations}" class="sidebar-link">
+                    <i data-lucide="map-pin"></i>
+                    <span>Quản lý địa điểm</span>
+                </a>
+                <a th:href="@{/admin/routes}" class="sidebar-link">
+                    <i data-lucide="route"></i>
+                    <span>Quản lý tuyến đường</span>
+                </a>
+                <a th:href="@{/admin/buses}" class="sidebar-link">
+                    <i data-lucide="bus"></i>
+                    <span>Quản lý xe</span>
+                </a>
+            </div>
+
+            <div class="nav-group" style="margin-top:24px">
+                <div class="nav-group-label">Cài đặt</div>
+                <a th:href="@{/admin/settings}" class="sidebar-link">
+                    <i data-lucide="settings"></i>
+                    <span>Cài đặt</span>
+                </a>
+                <a th:href="@{/}" class="sidebar-link">
+                    <i data-lucide="external-link"></i>
+                    <span>Về trang chủ</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info" th:if="${session.user != null}">
+                <div class="user-avatar" th:text="${#strings.substring(session.user.fullName, 0, 1)}">U</div>
+                <div class="user-details">
+                    <span class="user-name" th:text="${session.user.fullName}">Admin Name</span>
+                    <span class="user-role">Quản trị viên</span>
+                </div>
+            </div>
+            <form th:action="@{/auth/logout}" method="POST">
+                <button type="submit" class="btn-logout">
+                    <i data-lucide="log-out"></i>
+                    <span>Đăng xuất</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <main class="content-body" layout:fragment="content"></main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+    <th:block layout:fragment="custom-js"></th:block>
+
+    <script>
+        // Set active state for sidebar links based on current URL
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentPath = window.location.pathname;
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+            // Loop through all links and check if the current path starts with the link's href
+            sidebarLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href !== '/' && currentPath.startsWith(href)) {
+                    link.classList.add('active');
+                } else if (href === '/' && currentPath === '/') {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

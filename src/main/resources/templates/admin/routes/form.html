@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout-admin}">
+<head>
+    <title>Thêm/Sửa tuyến đường</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 th:text="${route.id != null ? 'Sửa tuyến đường' : 'Thêm tuyến đường mới'}"></h3>
+            <a th:href="@{/admin/routes}" class="btn btn-secondary">
+                <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                Quay lại
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="${route.id != null} ? @{/admin/routes/update/{id}(id=${route.id})} : @{/admin/routes/save}" 
+                      method="post" th:object="${route}">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="origin">Điểm đi <span class="text-danger">*</span></label>
+                                <select class="form-control" 
+                                        id="origin" 
+                                        name="origin.id"
+                                        required>
+                                    <option value="">-- Chọn điểm đi --</option>
+                                    <option th:each="location : ${locations}" 
+                                            th:value="${location.id}"
+                                            th:text="${location.name}"
+                                            th:selected="${route.origin != null and route.origin.id == location.id}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="destination">Điểm đến <span class="text-danger">*</span></label>
+                                <select class="form-control" 
+                                        id="destination" 
+                                        name="destination.id"
+                                        required>
+                                    <option value="">-- Chọn điểm đến --</option>
+                                    <option th:each="location : ${locations}" 
+                                            th:value="${location.id}"
+                                            th:text="${location.name}"
+                                            th:selected="${route.destination != null and route.destination.id == location.id}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="distance">Khoảng cách (km) <span class="text-danger">*</span></label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="distance" 
+                                       th:field="*{distance}"
+                                       required
+                                       min="0.01"
+                                       step="0.01"
+                                       placeholder="VD: 1730">
+                                <div class="text-danger" th:if="${#fields.hasErrors('distance')}" th:errors="*{distance}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:if="${error}" class="alert alert-danger">
+                        <span th:text="${error}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-danger">
+                            <i data-lucide="save" style="width: 16px; height: 16px;"></i>
+                            <span th:text="${route.id != null ? 'Cập nhật' : 'Thêm mới'}"></span>
+                        </button>
+                        <a th:href="@{/admin/routes}" class="btn btn-secondary">
+                            <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+                            Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!-- === fragments/footer.html === -->
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="footer" class="tb-footer py-5 mt-5" style="background-color: #1a1a2e; color: #b0bec5; border-top: 1px solid rgba(255,255,255,0.1);">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-3 col-sm-6 mb-4">
+                <h5 class="text-white mb-3 font-weight-bold">Về TicketBus</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-muted">Giới thiệu</a></li>
+                    <li><a href="#" class="text-muted">Tin tức</a></li>
+                    <li><a href="#" class="text-muted">Tuyển dụng</a></li>
+                    <li><a href="#" class="text-muted">Liên hệ</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-4">
+                <h5 class="text-white mb-3 font-weight-bold">Thông tin</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-muted">Chính sách bảo mật</a></li>
+                    <li><a href="#" class="text-muted">Điều khoản sử dụng</a></li>
+                    <li><a href="#" class="text-muted">Quy chế hoạt động</a></li>
+                    <li><a href="#" class="text-muted">Câu hỏi thường gặp</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-4">
+                <h5 class="text-white mb-3 font-weight-bold">Đối tác</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-muted">Đăng ký nhà xe</a></li>
+                    <li><a href="#" class="text-muted">Giải pháp doanh nghiệp</a></li>
+                    <li><a href="#" class="text-muted">Chương trình Affiliate</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-4">
+                <h5 class="text-white mb-3 font-weight-bold">Liên hệ</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2 d-flex align-items-center"><i data-lucide="phone" class="mr-2" style="width:16px;height:16px"></i> 1900 6067</li>
+                    <li class="mb-2 d-flex align-items-center"><i data-lucide="mail" class="mr-2" style="width:16px;height:16px"></i> support@ticketbus.vn</li>
+                    <li class="mb-2 d-flex align-items-center"><i data-lucide="map-pin" class="mr-2" style="width:16px;height:16px"></i> Hà Nội, Việt Nam</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row pt-3" style="border-top: 1px solid rgba(255,255,255,0.1);">
+            <div class="col-md-6 text-center text-md-left">
+                <p class="mb-0 small">&copy; 2026 TicketBus. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-right">
+                <p class="mb-0 small">Made with ❤️ in Việt Nam</p>
+            </div>
+        </div>
+    </div>
+    <style>
+        .tb-footer a { transition: color 0.3s; text-decoration: none; }
+        .tb-footer a:hover { color: #c0392b !important; }
+        .tb-footer ul li { margin-bottom: 8px; }
+    </style>
+</footer>
+</body>
+</html>

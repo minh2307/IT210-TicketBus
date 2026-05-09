@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout-admin}">
+<head>
+    <title>Quản lý xe - Bus Ticket Pro</title>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Admin</a></li>
+                <li class="breadcrumb-item active">Quản lý xe</li>
+            </ol>
+        </nav>
+
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>Quản lý xe</h3>
+            <a th:href="@{/admin/buses/new}" class="btn btn-danger">
+                <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+                Thêm xe mới
+            </a>
+        </div>
+
+        <!-- Flash Messages -->
+        <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show">
+            <div th:if="${param.success == 'created'}">Thêm xe thành công!</div>
+            <div th:if="${param.success == 'updated'}">Cập nhật xe thành công!</div>
+            <div th:if="${param.success == 'deleted'}">Xóa xe thành công!</div>
+            <button type="button" class="close" data-dismiss="alert">
+                <span>&times;</span>
+            </button>
+        </div>
+
+        <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show">
+            <span th:text="${param.error}"></span>
+            <button type="button" class="close" data-dismiss="alert">
+                <span>&times;</span>
+            </button>
+        </div>
+
+        <!-- Filter Form -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form th:action="@{/admin/buses}" method="GET" class="row g-3">
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" name="keyword" 
+                               th:value="${keyword}" placeholder="Tìm kiếm theo biển số hoặc hãng xe">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-control" name="status">
+                            <option value="">Tất cả trạng thái</option>
+                            <option th:each="busStatus : ${busStatuses}" 
+                                    th:value="${busStatus.name()}" 
+                                    th:text="${busStatus.displayName}"
+                                    th:selected="${busStatus.name() == status}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i data-lucide="search" style="width: 16px; height: 16px;"></i>
+                            Tìm kiếm
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <a th:href="@{/admin/buses}" class="btn btn-outline-secondary w-100">
+                            <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i>
+                            Reset
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Buses Table -->
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Biển số</th>
+                                <th>Loại xe</th>
+                                <th>Số ghế</th>
+                                <th>Hãng xe</th>
+                                <th>Tài xế</th>
+                                <th>Trạng thái</th>
+                                <th class="text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="bus, iterStat : ${buses.content}">
+                                <td th:text="${iterStat.index + 1}"></td>
+                                <td class="code-cell" th:text="${bus.licensePlate}"></td>
+                                <td th:text="${bus.busType.displayName}"></td>
+                                <td th:text="${bus.totalSeats}"></td>
+                                <td th:text="${bus.companyName}"></td>
+                                <td>
+                                    <div th:if="${bus.driverName}">
+                                        <div class="font-weight-bold" th:text="${bus.driverName}"></div>
+                                        <small class="text-muted" th:text="${bus.driverPhone}"></small>
+                                    </div>
+                                    <div th:if="${bus.driverName == null}" class="text-muted small">Chưa có</div>
+                                </td>
+                                <td>
+                                    <span th:if="${bus.status.name() == 'ACTIVE'}" class="badge badge-success">Hoạt động</span>
+                                    <span th:if="${bus.status.name() == 'INACTIVE'}" class="badge badge-secondary">Ngừng</span>
+                                    <span th:if="${bus.status.name() == 'MAINTENANCE'}" class="badge badge-warning">Bảo trì</span>
+                                </td>
+                                <td>
+                                    <div class="action-cell">
+                                        <a th:href="@{/admin/buses/{id}/view(id=${bus.id})}" class="btn-action btn-view" title="Xem chi tiết">
+                                            <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
+                                        </a>
+                                        <a th:href="@{/admin/buses/{id}/edit(id=${bus.id})}" class="btn-action btn-edit" title="Chỉnh sửa">
+                                            <i data-lucide="edit" style="width: 16px; height: 16px;"></i>
+                                        </a>
+                                        <form th:action="@{/admin/buses/{id}/delete(id=${bus.id})}" method="POST" style="display: inline;">
+                                            <button type="submit" class="btn-action btn-delete" title="Xóa" onclick="return confirmDelete()">
+                                                <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <nav th:if="${buses.totalPages > 1}" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:class="${currentPage == 0} ? 'disabled' : ''">
+                            <a class="page-link" th:href="@{/admin/buses(page=${currentPage - 1}, keyword=${keyword}, status=${status})}">
+                                <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
+                            </a>
+                        </li>
+                        <li th:each="i : ${#numbers.sequence(0, buses.totalPages - 1)}" 
+                            class="page-item" th:class="${currentPage == i} ? 'active' : ''">
+                            <a class="page-link" th:href="@{/admin/buses(page=${i}, keyword=${keyword}, status=${status})}" 
+                               th:text="${i + 1}"></a>
+                        </li>
+                        <li class="page-item" th:class="${currentPage == buses.totalPages - 1} ? 'disabled' : ''">
+                            <a class="page-link" th:href="@{/admin/buses(page=${currentPage + 1}, keyword=${keyword}, status=${status})}">
+                                <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        lucide.createIcons();
+        
+        function confirmDelete() {
+            return confirm('Bạn có chắc chắn muốn xóa xe này không?');
+        }
+    </script>
+</body>
+</html>

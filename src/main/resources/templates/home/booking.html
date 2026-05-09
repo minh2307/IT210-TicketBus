@@ -1,0 +1,98 @@
+<!-- === home/booking.html === -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout-user}">
+<head>
+    <title>Xác nhận đặt vé</title>
+    <link rel="stylesheet" th:href="@{/css/booking.css}">
+</head>
+<body>
+<main layout:fragment="content">
+
+    <section class="booking-section" id="bookingSection">
+        <div class="container">
+            <a th:href="@{/seat-map(tripId=${tripId})}" class="btn-back">
+                <i data-lucide="arrow-left" style="width:18px;height:18px"></i>
+                Quay lại chọn ghế
+            </a>
+
+            <h1 class="page-title">
+                <i data-lucide="ticket" style="width:28px;height:28px"></i>
+                Xác nhận đặt vé
+            </h1>
+
+            <div th:if="${errorMessage}" class="alert alert-danger" style="margin-bottom: 20px; border-radius: 12px;">
+                <i data-lucide="alert-circle" style="width:18px;height:18px;vertical-align:middle;margin-right:8px"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <!-- Trip Summary -->
+            <div class="booking-layout">
+                <div class="booking-summary">
+                    <h3><i data-lucide="info" style="width:18px;height:18px"></i> Thông tin chuyến xe</h3>
+                    <div class="summary-row">
+                        <span class="label">Tuyến đường:</span>
+                        <span class="value" th:text="${trip.route.origin.name + ' → ' + trip.route.destination.name}">Hà Nội → Hải Phòng</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">Ngày giờ đi:</span>
+                        <span class="value" th:text="${#temporals.format(trip.departureTime, 'HH:mm dd/MM/yyyy')}">08:00 10/05/2026</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">Số lượng ghế:</span>
+                        <span class="value" th:text="${#lists.size(seatIds)}">1</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span class="label">Tổng tiền:</span>
+                        <span class="value" th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">200,000đ</span>
+                    </div>
+                    <div style="margin-top: 15px; padding: 12px; background: rgba(243,156,18,0.1); border-radius: 8px; border: 1px solid rgba(243,156,18,0.3); font-size: 13px; color: #f39c12;">
+                        <i data-lucide="clock" style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i>
+                        Ghế của bạn sẽ được giữ trong 15 phút kể từ lúc chọn.
+                    </div>
+                </div>
+
+                <!-- Passenger Form -->
+                <div class="booking-form-container">
+                    <h3><i data-lucide="user" style="width:18px;height:18px"></i> Thông tin hành khách</h3>
+                    <form th:action="@{/booking}" method="POST">
+                        <input type="hidden" name="tripId" th:value="${tripId}">
+                        <!-- Handle multiple seatIds correctly -->
+                        <input type="hidden" name="seatIds" th:each="sid : ${seatIds}" th:value="${sid}">
+
+                        <div class="form-group">
+                            <label>Họ tên</label>
+                            <input type="text" class="form-control" th:value="${session.user.fullName}" readonly style="background-color: rgba(255,255,255,0.05);">
+                        </div>
+                        <div class="form-group">
+                            <label>Số điện thoại</label>
+                            <input type="tel" class="form-control" th:value="${session.user.phone}" readonly style="background-color: rgba(255,255,255,0.05);">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form-control" th:value="${session.user.email}" readonly style="background-color: rgba(255,255,255,0.05);">
+                        </div>
+
+                        <p style="font-size: 0.85rem; color: #9ca3af; margin-top: 15px;">
+                            <i data-lucide="shield-check" style="width:14px;height:14px;vertical-align:middle;"></i> 
+                            Thông tin được lấy từ hồ sơ cá nhân của bạn.
+                        </p>
+
+                        <button type="submit" class="btn-book">
+                            <i data-lucide="check-circle" style="width:20px;height:20px"></i>
+                            Xác nhận đặt vé
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+        });
+    </script>
+
+</main>
+</body>
+</html>

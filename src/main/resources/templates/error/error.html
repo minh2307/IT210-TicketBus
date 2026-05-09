@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lỗi - TicketBus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f5f7fa; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            padding: 20px 0;
+        }
+        .error-card { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            width: 100%; 
+            max-width: 500px; 
+            text-align: center;
+        }
+        .brand { 
+            color: #c0392b; 
+            font-weight: 700; 
+            font-size: 1.5rem; 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        .error-icon {
+            color: #c0392b;
+            margin-bottom: 20px;
+        }
+        .btn-primary { 
+            background-color: #c0392b; 
+            border-color: #c0392b; 
+        }
+        .btn-primary:hover { 
+            background-color: #96281b; 
+            border-color: #96281b; 
+        }
+    </style>
+</head>
+<body>
+    <div class="error-card">
+        <div class="brand d-flex justify-content-center align-items-center">
+            <i data-lucide="bus" class="mr-2"></i> TicketBus
+        </div>
+        
+        <div class="error-icon">
+            <i data-lucide="alert-circle" style="width: 64px; height: 64px;"></i>
+        </div>
+        
+        <h4 class="mb-3">Đã xảy ra lỗi</h4>
+        
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:unless="${error}" class="text-muted mb-4">
+            Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.
+        </div>
+        
+        <div class="d-flex gap-2 justify-content-center">
+            <a th:href="@{/}" class="btn btn-primary">
+                <i data-lucide="home" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                Về trang chủ
+            </a>
+            <a th:href="@{/auth/login}" class="btn btn-outline-primary">
+                <i data-lucide="log-in" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                Đăng nhập
+            </a>
+            <a th:href="@{/auth/register}" class="btn btn-outline-secondary">
+                <i data-lucide="user-plus" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                Đăng ký
+            </a>
+        </div>
+    </div>
+    
+    <script>lucide.createIcons();</script>
+</body>
+</html>

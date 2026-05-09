@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout-staff}">
+<head>
+    <title>Staff Dashboard</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 font-weight-bold">Staff Dashboard</h1>
+            <div class="text-muted">
+                <i data-lucide="clock" style="width:16px;height:16px;vertical-align:middle;margin-right:4px"></i>
+                <small th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}"></small>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card stat-card" style="background: rgba(52,152,219,0.1); border: 1px solid rgba(52,152,219,0.2);">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="text-muted small font-weight-bold mb-1 uppercase">CHUYẾN XE HÔM NAY</p>
+                                <h3 class="mb-0 font-weight-bold" th:text="${todayTrips ?: '15'}">15</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i data-lucide="bus" style="width: 40px; height: 40px; color: #3498db; opacity:0.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card stat-card" style="background: rgba(46,204,113,0.1); border: 1px solid rgba(46,204,113,0.2);">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="text-muted small font-weight-bold mb-1 uppercase">ĐẶT VÉ MỚI</p>
+                                <h3 class="mb-0 font-weight-bold" th:text="${totalBookings ?: '234'}">234</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i data-lucide="ticket" style="width: 40px; height: 40px; color: #2ecc71; opacity:0.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card stat-card" style="background: rgba(241,196,15,0.1); border: 1px solid rgba(241,196,15,0.2);">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="text-muted small font-weight-bold mb-1 uppercase">DOANH THU</p>
+                                <h3 class="mb-0 font-weight-bold" th:text="${revenue ?: '12.5M'}">12.5M</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i data-lucide="wallet" style="width: 40px; height: 40px; color: #f1c40f; opacity:0.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Content Area -->
+        <div class="row">
+            <!-- Recent Bookings Table -->
+            <div class="col-lg-8 mb-4">
+                <div class="card bg-dark-card" style="background: #1a1d27; border: 1px solid rgba(255,255,255,0.05); border-radius:12px;">
+                    <div class="card-header bg-transparent border-bottom border-light py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 font-weight-bold">Đặt vé gần đây</h5>
+                        <a th:href="@{/staff/tickets}" class="btn btn-sm btn-link text-primary p-0" style="font-weight:600">Xem tất cả</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover mb-0" style="background:transparent">
+                                <thead style="background: rgba(255,255,255,0.02)">
+                                    <tr>
+                                        <th class="border-0 small font-weight-bold py-3 px-4">MÃ VÉ</th>
+                                        <th class="border-0 small font-weight-bold py-3">HÀNH KHÁCH</th>
+                                        <th class="border-0 small font-weight-bold py-3">TRẠNG THÁI</th>
+                                        <th class="border-0 small font-weight-bold py-3">TỔNG TIỀN</th>
+                                        <th class="border-0 small font-weight-bold py-3 px-4 text-right">THỜI GIAN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="px-4 py-3"><span class="badge badge-secondary" style="font-family:monospace">TK-12345</span></td>
+                                        <td class="py-3">Nguyễn Văn A</td>
+                                        <td class="py-3"><span class="badge badge-success px-2 py-1">Đã thanh toán</span></td>
+                                        <td class="py-3">250,000đ</td>
+                                        <td class="px-4 py-3 text-right text-muted small">5 phút trước</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3"><span class="badge badge-secondary" style="font-family:monospace">TK-12346</span></td>
+                                        <td class="py-3">Trần Thị B</td>
+                                        <td class="py-3"><span class="badge badge-warning px-2 py-1">Chờ duyệt</span></td>
+                                        <td class="py-3">180,000đ</td>
+                                        <td class="px-4 py-3 text-right text-muted small">12 phút trước</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3"><span class="badge badge-secondary" style="font-family:monospace">TK-12347</span></td>
+                                        <td class="py-3">Lê Văn C</td>
+                                        <td class="py-3"><span class="badge badge-success px-2 py-1">Đã thanh toán</span></td>
+                                        <td class="py-3">300,000đ</td>
+                                        <td class="px-4 py-3 text-right text-muted small">1 giờ trước</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications / Feed -->
+            <div class="col-lg-4 mb-4">
+                <div class="card bg-dark-card" style="background: #1a1d27; border: 1px solid rgba(255,255,255,0.05); border-radius:12px;">
+                    <div class="card-header bg-transparent border-bottom border-light py-3">
+                        <h5 class="mb-0 font-weight-bold">Thông báo mới</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item bg-transparent border-light py-3 px-4">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="bg-success-subtle p-2 rounded" style="background:rgba(46,204,113,0.1)">
+                                        <i data-lucide="check-circle" style="width:16px;height:16px;color:#2ecc71"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <p class="mb-1 small font-weight-bold">Tuyến T001 đã khởi hành</p>
+                                        <p class="mb-0 x-small text-muted">Xe 29A-123.45 đã rời bến đúng giờ.</p>
+                                        <small class="text-muted" style="font-size:10px">5 PHÚT TRƯỚC</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list-group-item bg-transparent border-light py-3 px-4">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="bg-warning-subtle p-2 rounded" style="background:rgba(241,196,15,0.1)">
+                                        <i data-lucide="alert-triangle" style="width:16px;height:16px;color:#f1c40f"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <p class="mb-1 small font-weight-bold">Cảnh báo: Chuyến T002 sắp đầy</p>
+                                        <p class="mb-0 x-small text-muted">Chỉ còn 3 ghế trống trên chuyến HCM → Đà Nẵng.</p>
+                                        <small class="text-muted" style="font-size:10px">30 PHÚT TRƯỚC</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top border-light text-center py-2">
+                        <button class="btn btn-sm btn-link text-muted" style="text-decoration:none;font-size:12px">Xem tất cả thông báo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

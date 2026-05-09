@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout-admin}">
+<head>
+    <title>Quản lý xe - Bus Ticket Pro</title>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <style>
+        .form-control:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+        .license-plate {
+            text-transform: uppercase;
+        }
+        .invalid-feedback {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Admin</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/admin/buses}">Quản lý xe</a></li>
+                <li class="breadcrumb-item active" th:text="${isEdit ? 'Chỉnh sửa xe' : 'Thêm xe mới'}"></li>
+            </ol>
+        </nav>
+
+        <!-- Page Header -->
+        <h3 th:text="${isEdit ? 'Chỉnh sửa xe [' + busDto.licensePlate + ']' : 'Thêm xe mới'}"></h3>
+
+        <!-- Flash Messages -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+            <span th:text="${error}"></span>
+            <button type="button" class="close" data-dismiss="alert">
+                <span>&times;</span>
+            </button>
+        </div>
+
+        <!-- Bus Form -->
+        <div class="card">
+            <div class="card-body">
+                <form th:with="actionUrl=${isEdit ? '/admin/buses/' + (busDto.id ?: '') + '/edit' : '/admin/buses/new'}"
+                      th:action="${actionUrl}"
+                      th:object="${busDto}" method="POST">
+                    
+                    <!-- License Plate -->
+                    <div class="form-group">
+                        <label for="licensePlate">
+                            <i data-lucide="hash" style="width: 16px; height: 16px;"></i>
+                            Biển số xe <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control license-plate" id="licensePlate" 
+                               th:field="*{licensePlate}" required maxlength="20"
+                               placeholder="VD: 29A-12345">
+                        <div th:if="${#fields.hasErrors('licensePlate')}" class="invalid-feedback">
+                            <span th:errors="*{licensePlate}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Bus Type -->
+                    <div class="form-group">
+                        <label for="busType">
+                            <i data-lucide="truck" style="width: 16px; height: 16px;"></i>
+                            Loại xe <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-control" id="busType" th:field="*{busType}" required>
+                            <option value="">-- Chọn loại xe --</option>
+                            <option th:each="type : ${busTypes}" 
+                                    th:value="${type}" 
+                                    th:text="${type.displayName}"
+                                    th:data-seats="${type.defaultSeats}"></option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('busType')}" class="invalid-feedback">
+                            <span th:errors="*{busType}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Total Seats -->
+                    <div class="form-group">
+                        <label for="totalSeats">
+                            <i data-lucide="users" style="width: 16px; height: 16px;"></i>
+                            Số ghế <span class="text-danger">*</span>
+                        </label>
+                        <input type="number" class="form-control" id="totalSeats" 
+                               th:field="*{totalSeats}" required min="1" max="60">
+                        <div th:if="${#fields.hasErrors('totalSeats')}" class="invalid-feedback">
+                            <span th:errors="*{totalSeats}"></span>
+                        </div>
+                        <small class="form-text text-muted">Số ghế sẽ tự động điền theo loại xe</small>
+                    </div>
+
+                    <!-- Company Name -->
+                    <div class="form-group">
+                        <label for="companyName">
+                            <i data-lucide="building" style="width: 16px; height: 16px;"></i>
+                            Hãng xe <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="companyName" 
+                               th:field="*{companyName}" required maxlength="100"
+                               placeholder="VD: Hưng Thịnh, Mai Linh, Phương Trang...">
+                        <div th:if="${#fields.hasErrors('companyName')}" class="invalid-feedback">
+                            <span th:errors="*{companyName}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Driver Name -->
+                    <div class="form-group">
+                        <label for="driverName">
+                            <i data-lucide="user" style="width: 16px; height: 16px;"></i>
+                            Tên tài xế
+                        </label>
+                        <input type="text" class="form-control" id="driverName" 
+                               th:field="*{driverName}" maxlength="100"
+                               placeholder="VD: Nguyễn Văn A">
+                        <div th:if="${#fields.hasErrors('driverName')}" class="invalid-feedback">
+                            <span th:errors="*{driverName}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Driver Phone -->
+                    <div class="form-group">
+                        <label for="driverPhone">
+                            <i data-lucide="phone" style="width: 16px; height: 16px;"></i>
+                            SĐT tài xế
+                        </label>
+                        <input type="tel" class="form-control" id="driverPhone" 
+                               th:field="*{driverPhone}" maxlength="15"
+                               placeholder="VD: 0912345678" pattern="0[0-9]{9}">
+                        <div th:if="${#fields.hasErrors('driverPhone')}" class="invalid-feedback">
+                            <span th:errors="*{driverPhone}"></span>
+                        </div>
+                        <small class="form-text text-muted">Định dạng: 0xxxxxxxxx (10 số)</small>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="form-group">
+                        <label for="status">
+                            <i data-lucide="activity" style="width: 16px; height: 16px;"></i>
+                            Trạng thái <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-control" id="status" th:field="*{status}" required>
+                            <option th:each="st : ${busStatuses}" 
+                                    th:value="${st}" 
+                                    th:text="${st.displayName}"></option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('status')}" class="invalid-feedback">
+                            <span th:errors="*{status}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-group mb-0">
+                        <button type="submit" class="btn btn-danger">
+                            <i data-lucide="save" style="width: 16px; height: 16px;"></i>
+                            Lưu thay đổi
+                        </button>
+                        <a th:href="@{/admin/buses}" class="btn btn-secondary ml-2">
+                            <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+                            Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // Auto-fill total seats based on bus type
+        document.getElementById('busType').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const defaultSeats = selectedOption.getAttribute('data-seats');
+            const totalSeatsField = document.getElementById('totalSeats');
+            
+            if (defaultSeats) {
+                totalSeatsField.value = defaultSeats;
+            }
+        });
+
+        // Auto-format license plate to uppercase
+        document.getElementById('licensePlate').addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+
+        // Validate phone number format
+        document.getElementById('driverPhone').addEventListener('blur', function() {
+            const phone = this.value;
+            if (phone && !/^0[0-9]{9}$/.test(phone)) {
+                this.setCustomValidity('Số điện thoại phải có 10 số và bắt đầu bằng số 0');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    </script>
+</body>
+</html>
