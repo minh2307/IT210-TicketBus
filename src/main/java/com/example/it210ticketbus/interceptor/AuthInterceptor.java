@@ -50,14 +50,20 @@ public class AuthInterceptor implements HandlerInterceptor {
         // Check role-based access
         Role userRole = user.getRole();
 
-        // Admin only URLs
+        // Admin only URLs - chỉ ADMIN được vào
         if (currentURI.startsWith("/admin/") && userRole != Role.ADMIN) {
             response.sendRedirect("/403");
             return false;
         }
 
-        // Staff only URLs
+        // Staff only URLs - chỉ STAFF và ADMIN được vào, PASSENGER không
         if (currentURI.startsWith("/staff/") && userRole == Role.PASSENGER) {
+            response.sendRedirect("/403");
+            return false;
+        }
+
+        // Ngăn ADMIN vào trang STAFF
+        if (currentURI.startsWith("/staff/") && userRole == Role.ADMIN) {
             response.sendRedirect("/403");
             return false;
         }

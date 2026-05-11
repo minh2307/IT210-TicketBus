@@ -39,4 +39,7 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
                            @Param("startOfDay") LocalDateTime startOfDay,
                            @Param("endOfDay") LocalDateTime endOfDay,
                            @Param("status") TripStatus status);
+
+    @Query("SELECT COUNT(t) FROM Trip t WHERE t.departureTime BETWEEN :start AND :end")
+    long countTripsBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }

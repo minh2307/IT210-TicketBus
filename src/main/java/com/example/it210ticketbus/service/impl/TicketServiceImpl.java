@@ -35,6 +35,12 @@ public class TicketServiceImpl implements TicketService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
         UserProfile profile = user.getProfile();
         
+        if (profile == null) {
+            System.err.println("[DEBUG] CANH BAO: Nguoi dung " + userId + " khong co profile!");
+        } else {
+            System.out.println("[DEBUG] Tim thay profile cho user: " + profile.getFullName() + ", email: " + profile.getEmail());
+        }
+        
         List<Ticket> tickets = new java.util.ArrayList<>();
 
         for (Long seatId : seatIds) {
@@ -69,7 +75,9 @@ public class TicketServiceImpl implements TicketService {
             tickets.add(ticket);
         }
         
-        return tickets.stream().map(this::convertToDTO).collect(Collectors.toList());
+        List<TicketDTO> result = tickets.stream().map(this::convertToDTO).collect(Collectors.toList());
+        
+        return result;
     }
 
     // ===================== CORE-07: Tra cứu vé =====================

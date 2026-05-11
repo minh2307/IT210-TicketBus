@@ -24,7 +24,7 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted small font-weight-bold mb-1 uppercase">CHUYẾN XE HÔM NAY</p>
-                                <h3 class="mb-0 font-weight-bold" th:text="${todayTrips ?: '15'}">15</h3>
+                                <h3 class="mb-0 font-weight-bold" th:text="${todayTrips}">15</h3>
                             </div>
                             <div class="align-self-center">
                                 <i data-lucide="bus" style="width: 40px; height: 40px; color: #3498db; opacity:0.5"></i>
@@ -39,7 +39,7 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted small font-weight-bold mb-1 uppercase">ĐẶT VÉ MỚI</p>
-                                <h3 class="mb-0 font-weight-bold" th:text="${totalBookings ?: '234'}">234</h3>
+                                <h3 class="mb-0 font-weight-bold" th:text="${totalBookings}">234</h3>
                             </div>
                             <div class="align-self-center">
                                 <i data-lucide="ticket" style="width: 40px; height: 40px; color: #2ecc71; opacity:0.5"></i>
@@ -54,7 +54,7 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted small font-weight-bold mb-1 uppercase">DOANH THU</p>
-                                <h3 class="mb-0 font-weight-bold" th:text="${revenue ?: '12.5M'}">12.5M</h3>
+                                <h3 class="mb-0 font-weight-bold" th:text="${#numbers.formatDecimal(revenue, 0, 'COMMA', 0, 'POINT') + 'đ'}">12.5M</h3>
                             </div>
                             <div class="align-self-center">
                                 <i data-lucide="wallet" style="width: 40px; height: 40px; color: #f1c40f; opacity:0.5"></i>
@@ -83,30 +83,23 @@
                                         <th class="border-0 small font-weight-bold py-3">HÀNH KHÁCH</th>
                                         <th class="border-0 small font-weight-bold py-3">TRẠNG THÁI</th>
                                         <th class="border-0 small font-weight-bold py-3">TỔNG TIỀN</th>
-                                        <th class="border-0 small font-weight-bold py-3 px-4 text-right">THỜI GIAN</th>
+                                        <th class="border-0 small font-weight-bold py-3 px-4 text-right">THỜI GIAN ĐẶT</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="px-4 py-3"><span class="badge badge-secondary" style="font-family:monospace">TK-12345</span></td>
-                                        <td class="py-3">Nguyễn Văn A</td>
-                                        <td class="py-3"><span class="badge badge-success px-2 py-1">Đã thanh toán</span></td>
-                                        <td class="py-3">250,000đ</td>
-                                        <td class="px-4 py-3 text-right text-muted small">5 phút trước</td>
+                                    <tr th:each="ticket : ${recentTickets}">
+                                        <td class="px-4 py-3"><span class="badge badge-secondary" style="font-family:monospace" th:text="${ticket.ticketCode}">TK-12345</span></td>
+                                        <td class="py-3" th:text="${ticket.passengerName}">Nguyễn Văn A</td>
+                                        <td class="py-3">
+                                            <span th:if="${ticket.status == 'PENDING'}" class="badge badge-warning px-2 py-1">Chờ thanh toán</span>
+                                            <span th:if="${ticket.status == 'PAID'}" class="badge badge-success px-2 py-1">Đã thanh toán</span>
+                                            <span th:if="${ticket.status == 'CANCELLED'}" class="badge badge-danger px-2 py-1">Đã hủy</span>
+                                        </td>
+                                        <td class="py-3" th:text="${#numbers.formatDecimal(ticket.totalPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">250,000đ</td>
+                                        <td class="px-4 py-3 text-right text-muted small" th:text="${#temporals.format(ticket.bookedAt, 'HH:mm dd/MM')}">5 phút trước</td>
                                     </tr>
-                                    <tr>
-                                        <td class="px-4 py-3"><span class="badge badge-secondary" style="font-family:monospace">TK-12346</span></td>
-                                        <td class="py-3">Trần Thị B</td>
-                                        <td class="py-3"><span class="badge badge-warning px-2 py-1">Chờ duyệt</span></td>
-                                        <td class="py-3">180,000đ</td>
-                                        <td class="px-4 py-3 text-right text-muted small">12 phút trước</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-4 py-3"><span class="badge badge-secondary" style="font-family:monospace">TK-12347</span></td>
-                                        <td class="py-3">Lê Văn C</td>
-                                        <td class="py-3"><span class="badge badge-success px-2 py-1">Đã thanh toán</span></td>
-                                        <td class="py-3">300,000đ</td>
-                                        <td class="px-4 py-3 text-right text-muted small">1 giờ trước</td>
+                                    <tr th:if="${#lists.isEmpty(recentTickets)}">
+                                        <td colspan="5" class="text-center py-4 text-muted">Chưa có vé nào được đặt hôm nay</td>
                                     </tr>
                                 </tbody>
                             </table>

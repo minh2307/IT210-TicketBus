@@ -26,6 +26,14 @@ public class StaffController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
+        java.util.Map<String, Object> stats = ticketService.getStaffDashboardStats();
+        List<TicketDTO> recentTickets = ticketService.getRecentTickets(5);
+        
+        model.addAttribute("todayTrips", stats.get("todayTrips"));
+        model.addAttribute("totalBookings", stats.get("totalBookings"));
+        model.addAttribute("revenue", stats.get("revenue"));
+        model.addAttribute("recentTickets", recentTickets);
+        
         model.addAttribute("pageTitle", "Staff Dashboard");
         return "staff/dashboard";
     }

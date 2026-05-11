@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,8 @@ import java.util.Optional;
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Optional<Ticket> findByTicketCode(String ticketCode);
     List<Ticket> findByUserId(Long userId);
+    
+    List<Ticket> findByStatusAndBookedAtBefore(TicketStatus status, LocalDateTime threshold);
     
     List<Ticket> findByStatusOrderByBookedAtDesc(TicketStatus status);
     

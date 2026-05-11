@@ -37,7 +37,7 @@ dependencies {
 
     implementation 'org.springframework.security:spring-security-crypto'
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
-
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 tasks.named('test') {
