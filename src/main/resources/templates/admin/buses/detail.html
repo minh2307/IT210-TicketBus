@@ -159,6 +159,29 @@
                     </div>
                 </div>
 
+                <!-- Thông tin Tuyến đường -->
+                <div class="info-section mt-4">
+                    <h4 class="mb-3">
+                        <i data-lucide="map-pin" style="width: 20px; height: 20px;"></i>
+                        Các tuyến đường hoạt động
+                    </h4>
+                    <div th:if="${#lists.isEmpty(routes)}" class="text-muted">Xe này chưa được phân công vào tuyến đường nào.</div>
+                    <div th:if="${not #lists.isEmpty(routes)}" class="row">
+                        <div class="col-md-4 mb-3" th:each="route : ${routes}">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body py-2 px-3">
+                                    <div class="font-weight-bold text-dark" style="font-size: 1.1rem;">
+                                        <span th:text="${route.origin.name}"></span> 
+                                        <i data-lucide="arrow-right" class="mx-1 text-danger" style="width: 14px; height: 14px;"></i>
+                                        <span th:text="${route.destination.name}"></span>
+                                    </div>
+                                    <small class="text-muted"><i data-lucide="map" style="width: 12px; height: 12px;"></i> Khoảng cách: <span th:text="${route.distance}"></span> km</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Action Buttons -->
                 <div class="d-flex justify-content-between mt-4 pt-4 border-top">
                     <div>

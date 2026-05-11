@@ -21,5 +21,9 @@ public interface TicketService {
     void cancelTicketByPassenger(String ticketCode, String phone);
 
     // Bổ sung: Tìm kiếm vé cho Staff
-    List<TicketDTO> searchTickets(String status, String search);
+    org.springframework.data.domain.Page<TicketDTO> searchTickets(String status, String search, org.springframework.data.domain.Pageable pageable);
+
+    // Bổ sung cho Dashboard
+    java.util.Map<String, Object> getStaffDashboardStats();
+    List<TicketDTO> getRecentTickets(int limit);
 }

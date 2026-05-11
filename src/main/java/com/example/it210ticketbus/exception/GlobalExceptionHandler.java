@@ -67,7 +67,8 @@ public class GlobalExceptionHandler {
     
     @ExceptionHandler(Exception.class)
     public String handleGenericException(Exception ex, Model model) {
-        model.addAttribute("error", "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.");
+        model.addAttribute("error", ex.getMessage());
+        model.addAttribute("exception", ex.getClass().getName());
         return "error/error";
     }
 }

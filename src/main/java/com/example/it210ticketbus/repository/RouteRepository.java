@@ -30,4 +30,7 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     List<Route> findAllWithLocations();
     
     boolean existsByOriginAndDestination(Location origin, Location destination);
+
+    @Query("SELECT DISTINCT r FROM Trip t JOIN t.route r LEFT JOIN FETCH r.origin LEFT JOIN FETCH r.destination WHERE t.bus.id = :busId")
+    List<Route> findDistinctRoutesByBusId(@Param("busId") Long busId);
 }

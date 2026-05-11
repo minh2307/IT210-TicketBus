@@ -1,6 +1,7 @@
 package com.example.it210ticketbus.repository;
 
 import com.example.it210ticketbus.enums.BusStatus;
+import com.example.it210ticketbus.enums.BusType;
 import com.example.it210ticketbus.model.Bus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,13 +39,15 @@ public interface BusRepository extends JpaRepository<Bus, Long> {
      */
     @Query("SELECT b FROM Bus b WHERE " +
            "(:keyword IS NULL OR :keyword = '' OR " +
-           "b.licensePlate LIKE %:keyword% OR " +
-           "b.companyName LIKE %:keyword% OR " +
-           "b.driverName LIKE %:keyword%) AND " +
-           "(:status IS NULL OR :status = '' OR b.status = :status)")
+           "LOWER(b.licensePlate) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "LOWER(b.companyName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "LOWER(b.driverName) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
+           "(:status IS NULL OR b.status = :status) AND " +
+           "(:busType IS NULL OR b.busType = :busType)")
     Page<Bus> searchBuses(@Param("keyword") String keyword, 
-                          @Param("status") BusStatus status, 
-                          Pageable pageable);
+                         @Param("status") BusStatus status, 
+                         @Param("busType") BusType busType,
+                         Pageable pageable);
     
     /**
      * Count buses by status

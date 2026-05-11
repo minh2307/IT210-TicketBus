@@ -22,6 +22,9 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     
     List<Ticket> findByStatusOrderByBookedAtDesc(TicketStatus status);
     
+    @Query("SELECT t FROM Ticket t ORDER BY t.bookedAt DESC")
+    List<Ticket> findRecentTickets(org.springframework.data.domain.Pageable pageable);
+    
     List<Ticket> findTop10ByOrderByBookedAtDesc();
     
     long countByStatus(TicketStatus status);
@@ -39,7 +42,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
            "OR LOWER(t.passengerName) LIKE LOWER(CONCAT('%', :search, '%')) " +
            "OR LOWER(t.passengerPhone) LIKE LOWER(CONCAT('%', :search, '%'))) " +
            "ORDER BY t.bookedAt DESC")
-    List<Ticket> searchTickets(@Param("status") TicketStatus status, @Param("search") String search);
+    org.springframework.data.domain.Page<Ticket> searchTickets(@Param("status") TicketStatus status, @Param("search") String search, org.springframework.data.domain.Pageable pageable);
 
     // 1. Thống kê doanh thu theo từng ngày trong tháng hiện tại
     @Query(value = "SELECT DATE(booked_at) as reportDate, COALESCE(SUM(total_price), 0) as totalRevenue, COUNT(id) as successRides " +
@@ -69,4 +72,10 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
                    "JOIN locations ld ON r.destination_id = ld.id " +
                    "GROUP BY tr.route_id, lo.name, ld.name ORDER BY bookingCount DESC LIMIT 10", nativeQuery = true)
     List<RouteStat> getTopRoutes();
+
+    @Query("SELECT COALESCE(SUM(t.totalPrice), 0) FROM Ticket t WHERE t.status = 'PAID' AND t.bookedAt >= :since")
+    double sumRevenueSince(@Param("since") LocalDateTime since);
+
+    @Query("SELECT COUNT(t) FROM Ticket t WHERE t.bookedAt >= :since")
+    long countBookingsSince(@Param("since") LocalDateTime since);
 }

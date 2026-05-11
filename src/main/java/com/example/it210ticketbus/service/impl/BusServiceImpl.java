@@ -3,6 +3,7 @@ package com.example.it210ticketbus.service.impl;
 import com.example.it210ticketbus.dto.request.BusRequest;
 import com.example.it210ticketbus.dto.response.BusDTO;
 import com.example.it210ticketbus.enums.BusStatus;
+import com.example.it210ticketbus.enums.BusType;
 import com.example.it210ticketbus.exception.BusNotFoundException;
 import com.example.it210ticketbus.exception.LicensePlateAlreadyExistsException;
 import com.example.it210ticketbus.model.Bus;
@@ -26,20 +27,11 @@ import java.util.stream.Collectors;
 public class BusServiceImpl implements BusService {
     
     private final BusRepository busRepository;
+    private final com.example.it210ticketbus.repository.RouteRepository routeRepository;
     
-    @Override
     @Transactional(readOnly = true)
-    public Page<BusDTO> getAllBuses(String keyword, String status, Pageable pageable) {
-        BusStatus busStatus = null;
-        if (status != null && !status.isEmpty()) {
-            try {
-                busStatus = BusStatus.valueOf(status);
-            } catch (IllegalArgumentException e) {
-                // Invalid status, ignore filter
-            }
-        }
-        
-        Page<Bus> busPage = busRepository.searchBuses(keyword, busStatus, pageable);
+    public Page<BusDTO> getAllBuses(String keyword, BusStatus status, BusType busType, Pageable pageable) {
+        Page<Bus> busPage = busRepository.searchBuses(keyword, status, busType, pageable);
         return busPage.map(this::mapToDTO);
     }
     
@@ -70,6 +62,14 @@ public class BusServiceImpl implements BusService {
                 .build();
         
         Bus savedBus = busRepository.save(bus);
+        
+        // Handle assigned routes
+        if (request.getRouteIds() != null && !request.getRouteIds().isEmpty()) {
+            List<com.example.it210ticketbus.model.Route> routes = routeRepository.findAllById(request.getRouteIds());
+            savedBus.setAssignedRoutes(routes);
+            savedBus = busRepository.save(savedBus);
+        }
+        
         return mapToDTO(savedBus);
     }
     
@@ -91,6 +91,12 @@ public class BusServiceImpl implements BusService {
         bus.setDriverName(request.getDriverName());
         bus.setDriverPhone(request.getDriverPhone());
         bus.setStatus(request.getStatus());
+        
+        // Handle assigned routes
+        if (request.getRouteIds() != null) {
+            List<com.example.it210ticketbus.model.Route> routes = routeRepository.findAllById(request.getRouteIds());
+            bus.setAssignedRoutes(routes);
+        }
         
         Bus updatedBus = busRepository.save(bus);
         return mapToDTO(updatedBus);
@@ -118,6 +124,11 @@ public class BusServiceImpl implements BusService {
                 .driverName(bus.getDriverName())
                 .driverPhone(bus.getDriverPhone())
                 .status(bus.getStatus())
+                .routes(bus.getAssignedRoutes() != null && !bus.getAssignedRoutes().isEmpty() ? 
+                        bus.getAssignedRoutes() : routeRepository.findDistinctRoutesByBusId(bus.getId()))
+                .routeIds((bus.getAssignedRoutes() != null && !bus.getAssignedRoutes().isEmpty()) ? 
+                        bus.getAssignedRoutes().stream().map(com.example.it210ticketbus.model.Route::getId).collect(Collectors.toList()) :
+                        routeRepository.findDistinctRoutesByBusId(bus.getId()).stream().map(com.example.it210ticketbus.model.Route::getId).collect(Collectors.toList()))
                 .createdAt(bus.getCreatedAt())
                 .updatedAt(bus.getUpdatedAt())
                 .build();

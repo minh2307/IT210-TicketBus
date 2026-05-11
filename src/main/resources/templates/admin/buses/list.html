@@ -46,7 +46,7 @@
         <div class="card mb-4">
             <div class="card-body">
                 <form th:action="@{/admin/buses}" method="GET" class="row g-3">
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <input type="text" class="form-control" name="keyword" 
                                th:value="${keyword}" placeholder="Tìm kiếm theo biển số hoặc hãng xe">
                     </div>
@@ -88,12 +88,13 @@
                                 <th>Số ghế</th>
                                 <th>Hãng xe</th>
                                 <th>Tài xế</th>
+                                 <th>Lộ trình</th>
                                 <th>Trạng thái</th>
                                 <th class="text-right">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="bus, iterStat : ${buses.content}">
+                            <tr th:each="bus, iterStat : ${buses}">
                                 <td th:text="${iterStat.index + 1}"></td>
                                 <td class="code-cell" th:text="${bus.licensePlate}"></td>
                                 <td th:text="${bus.busType.displayName}"></td>
@@ -107,19 +108,26 @@
                                     <div th:if="${bus.driverName == null}" class="text-muted small">Chưa có</div>
                                 </td>
                                 <td>
+                                    <div th:if="${#lists.isEmpty(bus.routes)}" class="text-muted small">Chưa phân công</div>
+                                    <div th:each="route, iter : ${bus.routes}" th:if="${iter.index < 2}">
+                                        <span class="badge badge-dark" th:text="${route.origin.name + ' - ' + route.destination.name}"></span>
+                                    </div>
+                                    <div th:if="${#lists.size(bus.routes) > 2}" class="text-muted small">... và [[${#lists.size(bus.routes) - 2}]] tuyến khác</div>
+                                </td>
+                                <td>
                                     <span th:if="${bus.status.name() == 'ACTIVE'}" class="badge badge-success">Hoạt động</span>
                                     <span th:if="${bus.status.name() == 'INACTIVE'}" class="badge badge-secondary">Ngừng</span>
                                     <span th:if="${bus.status.name() == 'MAINTENANCE'}" class="badge badge-warning">Bảo trì</span>
                                 </td>
                                 <td>
                                     <div class="action-cell">
-                                        <a th:href="@{/admin/buses/{id}/view(id=${bus.id})}" class="btn-action btn-view" title="Xem chi tiết">
+                                        <a th:href="@{/admin/buses/view/{id}(id=${bus.id})}" class="btn-action btn-view" title="Xem chi tiết">
                                             <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                         </a>
-                                        <a th:href="@{/admin/buses/{id}/edit(id=${bus.id})}" class="btn-action btn-edit" title="Chỉnh sửa">
+                                        <a th:href="@{/admin/buses/edit/{id}(id=${bus.id})}" class="btn-action btn-edit" title="Chỉnh sửa">
                                             <i data-lucide="edit" style="width: 16px; height: 16px;"></i>
                                         </a>
-                                        <form th:action="@{/admin/buses/{id}/delete(id=${bus.id})}" method="POST" style="display: inline;">
+                                        <form th:action="@{/admin/buses/delete/{id}(id=${bus.id})}" method="POST" style="display: inline;">
                                             <button type="submit" class="btn-action btn-delete" title="Xóa" onclick="return confirmDelete()">
                                                 <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
                                             </button>
@@ -132,19 +140,19 @@
                 </div>
 
                 <!-- Pagination -->
-                <nav th:if="${buses.totalPages > 1}" class="mt-4">
+                <nav th:if="${totalPages > 1}" class="mt-4">
                     <ul class="pagination justify-content-center">
                         <li class="page-item" th:class="${currentPage == 0} ? 'disabled' : ''">
                             <a class="page-link" th:href="@{/admin/buses(page=${currentPage - 1}, keyword=${keyword}, status=${status})}">
                                 <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
                             </a>
                         </li>
-                        <li th:each="i : ${#numbers.sequence(0, buses.totalPages - 1)}" 
+                        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
                             class="page-item" th:class="${currentPage == i} ? 'active' : ''">
                             <a class="page-link" th:href="@{/admin/buses(page=${i}, keyword=${keyword}, status=${status})}" 
                                th:text="${i + 1}"></a>
                         </li>
-                        <li class="page-item" th:class="${currentPage == buses.totalPages - 1} ? 'disabled' : ''">
+                        <li class="page-item" th:class="${currentPage == totalPages - 1} ? 'disabled' : ''">
                             <a class="page-link" th:href="@{/admin/buses(page=${currentPage + 1}, keyword=${keyword}, status=${status})}">
                                 <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
                             </a>

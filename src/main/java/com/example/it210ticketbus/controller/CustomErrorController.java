@@ -18,10 +18,18 @@ public class CustomErrorController implements ErrorController {
         if (status != null) {
             model.addAttribute("status", status);
         }
+        
+        if (exception != null) {
+            model.addAttribute("exception", exception.getClass().getName());
+            if (message == null || message.toString().isEmpty()) {
+                if (exception instanceof Throwable) {
+                    message = ((Throwable) exception).getMessage();
+                }
+            }
+        }
+
         if (message != null && !message.toString().isEmpty()) {
             model.addAttribute("error", message);
-        } else if (exception != null) {
-            model.addAttribute("error", exception.toString());
         } else {
             model.addAttribute("error", "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.");
         }

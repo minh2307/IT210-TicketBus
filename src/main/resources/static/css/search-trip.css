@@ -117,8 +117,8 @@
 }
 
 .search-box-inline select option {
-    background: var(--bg-dark);
-    color: var(--text-primary);
+    background: #1a1d27;
+    color: #fff;
 }
 
 .search-box-inline .swap-btn {

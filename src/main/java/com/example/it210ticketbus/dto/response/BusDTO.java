@@ -24,6 +24,8 @@ public class BusDTO {
     private String driverName;
     private String driverPhone;
     private BusStatus status;
+    private java.util.List<com.example.it210ticketbus.model.Route> routes;
+    private java.util.List<Long> routeIds;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -2,6 +2,8 @@ package com.example.it210ticketbus.service;
 
 import com.example.it210ticketbus.dto.request.BusRequest;
 import com.example.it210ticketbus.dto.response.BusDTO;
+import com.example.it210ticketbus.enums.BusStatus;
+import com.example.it210ticketbus.enums.BusType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,10 +17,11 @@ public interface BusService {
      * Get all buses with pagination and filtering
      * @param keyword search keyword
      * @param status filter by status
+     * @param busType filter by bus type
      * @param pageable pagination parameters
      * @return page of BusDTO
      */
-    Page<BusDTO> getAllBuses(String keyword, String status, Pageable pageable);
+    Page<BusDTO> getAllBuses(String keyword, BusStatus status, BusType busType, Pageable pageable);
     
     /**
      * Get a bus by ID

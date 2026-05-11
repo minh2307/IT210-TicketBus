@@ -25,6 +25,7 @@ public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
     private final SeatRepository seatRepository;
+    private final com.example.it210ticketbus.repository.TripRepository tripRepository;
 
     // ===================== CORE-06: Đặt vé =====================
     @Override
@@ -186,7 +187,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TicketDTO> searchTickets(String status, String search) {
+    public org.springframework.data.domain.Page<TicketDTO> searchTickets(String status, String search, org.springframework.data.domain.Pageable pageable) {
         TicketStatus ticketStatus = null;
         if (status != null && !status.isEmpty() && !status.equalsIgnoreCase("ALL")) {
             try {
@@ -196,7 +197,34 @@ public class TicketServiceImpl implements TicketService {
         
         String searchTerm = (search != null && !search.trim().isEmpty()) ? search.trim() : null;
         
-        return ticketRepository.searchTickets(ticketStatus, searchTerm).stream()
+        return ticketRepository.searchTickets(ticketStatus, searchTerm, pageable)
+                .map(this::convertToDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public java.util.Map<String, Object> getStaffDashboardStats() {
+        java.time.LocalDateTime now = java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh"));
+        java.time.LocalDateTime startOfToday = now.toLocalDate().atStartOfDay();
+        java.time.LocalDateTime endOfToday = now.toLocalDate().atTime(23, 59, 59);
+
+        long todayTrips = tripRepository.countTripsBetween(startOfToday, endOfToday);
+        long totalBookings = ticketRepository.countBookingsSince(startOfToday);
+        double revenue = ticketRepository.sumRevenueSince(startOfToday);
+
+        java.util.Map<String, Object> stats = new java.util.HashMap<>();
+        stats.put("todayTrips", todayTrips);
+        stats.put("totalBookings", totalBookings);
+        stats.put("revenue", revenue);
+        
+        return stats;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TicketDTO> getRecentTickets(int limit) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(0, limit);
+        return ticketRepository.findRecentTickets(pageable).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

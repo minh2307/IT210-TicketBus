@@ -109,3 +109,31 @@
 .toast-hide { animation: toastOut 0.3s ease forwards; }
 @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 @keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+
+/* Pagination */
+.pagination-container {
+    padding: 0 10px;
+}
+.pagination-info {
+    color: var(--text-muted);
+}
+.pagination .page-link {
+    border-radius: 4px;
+    margin: 0 2px;
+    padding: 5px 12px;
+    font-weight: 600;
+    transition: all var(--transition);
+}
+.pagination .page-link:hover:not(.disabled) {
+    background: rgba(255,255,255,0.1) !important;
+}
+.pagination .page-item.active .page-link {
+    background: var(--red-primary) !important;
+    border-color: var(--red-primary) !important;
+    color: white !important;
+    box-shadow: 0 4px 10px rgba(231,76,60,0.3);
+}
+.pagination .page-item.disabled .page-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

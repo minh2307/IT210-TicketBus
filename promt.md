@@ -1,35 +1,39 @@
-Bạn là senior Java developer. Hãy implement CORE-06 cho hệ thống Bus Ticket Pro.
+Vai trò: Hãy đóng vai trò là một Senior Technical Lead kiêm QA Engineer.
 
-TECH STACK:
-- Backend: Java Servlet + Service + DAO (3-layer)
-- Frontend: HTML5 + CSS3 + JavaScript (Fetch API) — KHÔNG dùng JSP
-- Database: MySQL, dùng JDBC Transaction (hoặc @Transactional nếu Spring)
-- Server: Apache Tomcat
+Nhiệm vụ: Tôi đang phát triển một hệ thống đặt vé xe khách. Dưới đây là danh sách các tính năng cốt lõi (CORE) và yêu cầu tối ưu (Hướng 4) của dự án. Hãy đối chiếu, rà soát toàn bộ phần mã nguồn (hoặc tài liệu thiết kế) mà tôi cung cấp ở cuối để đánh giá mức độ hoàn thiện của hệ thống.
 
-NHIỆM VỤ:
-1. Tạo trang booking.html:
-    - Hiển thị tóm tắt: tuyến, ngày đi, số ghế đã chọn (đọc từ sessionStorage)
-    - Form nhập: Họ tên, SĐT, Email
-    - Nút "Xác nhận đặt vé" → fetch POST /api/bookings (JSON body)
+Tiêu chí đánh giá chi tiết (Checklist):
 
-2. BookingServlet.java (POST /api/bookings):
-    - Parse JSON: {tripId, seatId, passengerName, phone, email}
-    - Gọi BookingService.createBooking(dto)
-    - Trả về {ticketCode, message} nếu thành công
-    - Trả về 409 nếu ghế đã bị đặt, 500 nếu lỗi khác
+Bảo mật & Phân quyền (CORE-01, CORE-02, CORE-03):
 
-3. BookingService.java — ĐÂY LÀ TRỌNG TÂM:
-    - Bắt đầu Transaction thủ công: conn.setAutoCommit(false)
-    - B1: SELECT status FROM seats WHERE seat_id=? FOR UPDATE
-    - B2: Nếu status != 'AVAILABLE' → throw SeatUnavailableException → rollback
-    - B3: INSERT INTO tickets (ticket_code, trip_id, seat_id, passenger_name, phone, email, status, created_at) VALUES (UUID(), ?, ?, ?, ?, ?, 'PENDING', NOW())
-    - B4: UPDATE seats SET status='PENDING', held_until=NULL WHERE seat_id=?
-    - B5: conn.commit()
-    - Bất kỳ bước nào lỗi: conn.rollback() → không tạo vé "mồ côi"
+Mật khẩu lưu trữ trong DB đã được băm bằng thuật toán BCrypt hoặc PBKDF2 chưa?
 
-4. booking-confirm.html:
-    - Nhận ticketCode từ response JSON
-    - Hiển thị thông báo thành công: mã vé, hướng dẫn thanh toán tại quầy
-    - Nút "Tra cứu vé của tôi" → redirect sang lookup.html
+Cơ chế kiểm soát truy cập (RBAC) có được cấu hình chặn đúng endpoint không? (Hành khách không được vào Staff/Admin; Staff không được vào trang cấu hình của Admin).
 
-OUTPUT: booking.html, booking.js, BookingServlet.java, BookingService.java, BookingDAO.java, TicketDAO.java, SeatUnavailableException.java, SQL INSERT mẫu, SQL schema bảng tickets đầy đủ.
+Các chức năng quản lý Profile cá nhân cho từng loại người dùng (Passenger, Staff, Admin) đã có đủ luồng xử lý chưa?
+
+Quản lý Dữ liệu & Danh mục (CORE-04):
+
+Đã có đầy đủ API CRUD cho danh mục Xe (Bus) dành cho Admin chưa?
+
+Các danh mục cố định như Tỉnh thành, Tuyến đường có cơ chế seed data sẵn vào DB lúc khởi tạo không?
+
+Xử lý Đồng thời & Toàn vẹn Dữ liệu (CORE-05, CORE-06):
+
+Khi load sơ đồ ghế, trạng thái ghế (PENDING/BOOKED) đã được disable chính xác chưa? Cơ chế giữ chỗ tạm thời và chống xung đột (Race Condition/Locking) được xử lý ra sao?
+
+Quá trình đặt vé có được đặt trong một Transaction đồng nhất không? Việc tạo Ticket (PENDING) và cập nhật trạng thái Seat (PENDING) có tự động rollback nếu xảy ra lỗi (Exception) không?
+
+Quản lý Vòng đời Vé (CORE-08, CORE-09):
+
+Chức năng duyệt vé của Staff (chuyển PENDING → PAID) đã hoạt động đúng logic chưa?
+
+Cơ chế xử lý vé quá hạn (hủy vé tự động, giải phóng ghế về AVAILABLE) được cấu hình như thế nào (Cronjob/Scheduler)?
+
+Logic hủy vé chủ động của hành khách có kiểm tra đúng điều kiện thời gian (trước 12h khởi hành) và cập nhật đồng thời vé (CANCELLED) + ghế (AVAILABLE) không?
+
+Truy vấn Phức tạp & Tối ưu hóa (CORE-07, Hướng 4):
+
+API tra cứu vé (nhập Mã vé + SĐT) có sử dụng câu lệnh JOIN hợp lý để lấy toàn bộ thông tin liên kết (Tuyến, Xe, Ghế, Giờ đi, Trạng thái) nhằm tránh lỗi N+1 Query không?
+
+Phần báo cáo thống kê (Dashboard doanh thu, Top chuyến xe) có được xử lý triệt để ở tầng Database (sử dụng GROUP BY, SUM...) không? Tuyệt đối không được kéo toàn bộ dữ liệu lên tầng Backend và dùng vòng lặp (for/while) để tính toán.

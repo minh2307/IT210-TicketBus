@@ -19,6 +19,8 @@ import lombok.*;
 @Builder
 public class BusRequest {
     
+    private Long id; // Added for UI compatibility
+    
     @NotBlank(message = "Biển số xe không được để trống")
     @Size(max = 20, message = "Biển số xe không được vượt quá 20 ký tự")
     private String licensePlate;
@@ -42,4 +44,8 @@ public class BusRequest {
     
     @NotNull(message = "Trạng thái không được để trống")
     private BusStatus status;
+
+    private java.util.List<?> routes; // Added for UI compatibility
+    
+    private java.util.List<Long> routeIds; // IDs for assigning routes
 }

@@ -56,4 +56,12 @@ public class Bus {
     
     @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Trip> trips;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "bus_assigned_routes",
+        joinColumns = @JoinColumn(name = "bus_id"),
+        inverseJoinColumns = @JoinColumn(name = "route_id")
+    )
+    private List<Route> assignedRoutes;
 }

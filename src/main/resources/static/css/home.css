@@ -75,7 +75,7 @@ a { text-decoration: none; }
   cursor: pointer;
   outline: none;
 }
-.lang-select option { background: var(--dark-card); color: #fff; }
+.lang-select option { background: #1a1d27; color: #fff; }
 
 /* ===== HERO SECTION ===== */
 .hero-section {
@@ -172,7 +172,7 @@ a { text-decoration: none; }
   box-shadow: 0 0 0 3px rgba(216,78,85,0.2);
   background: rgba(255,255,255,0.1);
 }
-.input-wrapper select option { background: var(--dark-card); color: #fff; }
+.input-wrapper select option { background: #1a1d27; color: #fff; }
 
 .swap-btn {
   width: 44px; height: 44px;

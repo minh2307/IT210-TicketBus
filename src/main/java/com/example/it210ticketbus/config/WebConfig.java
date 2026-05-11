@@ -1,4 +1,3 @@
-// === FILE: com/example/it210ticketbus/config/WebConfig.java ===
 package com.example.it210ticketbus.config;
 
 import com.example.it210ticketbus.interceptor.AuthInterceptor;

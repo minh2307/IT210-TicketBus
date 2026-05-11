@@ -143,6 +143,41 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination -->
+            <div class="pagination-container mt-4 d-flex justify-content-between align-items-center" th:if="${totalPages > 0}">
+                <div class="pagination-info text-muted small">
+                    Hiển thị từ <span th:text="${currentPage * 10 + 1}">1</span> 
+                    đến <span th:text="${(currentPage + 1) * 10 > totalItems ? totalItems : (currentPage + 1) * 10}">10</span> 
+                    trong tổng số <span th:text="${totalItems}">100</span> vé
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/staff/tickets(page=${currentPage - 1}, status=${currentStatus}, search=${searchTerm})}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        
+                        <th:block th:each="i : ${pageNumbers}">
+                            <li class="page-item" th:if="${i != -1}" th:classappend="${currentPage == i} ? 'active'">
+                                <a class="page-link" th:href="@{/staff/tickets(page=${i}, status=${currentStatus}, search=${searchTerm})}" 
+                                   th:text="${i + 1}"
+                                   th:style="${currentPage == i} ? 'background: var(--red-primary); border-color: var(--red-primary); color: white;' : 'background: rgba(255,255,255,0.05); border-color: var(--border-color); color: var(--text-primary);'">1</a>
+                            </li>
+                            <li class="page-item disabled" th:if="${i == -1}">
+                                <span class="page-link" style="background: transparent; border: none; color: var(--text-muted);">...</span>
+                            </li>
+                        </th:block>
+
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/staff/tickets(page=${currentPage + 1}, status=${currentStatus}, search=${searchTerm})}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </section>
 
         <!-- Hidden form for cancellation -->

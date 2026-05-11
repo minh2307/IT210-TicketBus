@@ -27,7 +27,7 @@ INSERT INTO users (id, username, passwordHash, role, created_at, updated_at) VAL
 (3, 'user', '$2a$12$UwvlLF5etGXvfvwluJdRQOrTS08oy7xc2bpjAmmQRMIHGzEPUoC0m   ', 'PASSENGER', NOW(), NOW());
 
 INSERT INTO user_profiles (id, user_id, fullName, email, phone, address) VALUES
-(1, 1, 'Admin System', 'admin@ticketbus.com', '0901234567', 'Hà Nội'),
+    (1, 1, 'Admin System', 'admin@ticketbus.com', '0901234567', 'Hà Nội'),
 (2, 2, 'Staff Member', 'staff@ticketbus.com', '0901234568', 'TP.HCM'),
 (3, 3, 'Nguyễn Văn Người Dùng', 'user@gmail.com', '0901234569', 'Sài Gòn');
 
